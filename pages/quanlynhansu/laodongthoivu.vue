@@ -2094,26 +2094,26 @@ export default {
 
     async getNhansu() {
       const res = await this.$axios.get("/api/empl/all-emp-thoivu");
-      console.log(data);
+      // console.log(res);
       this.listNhanSu = res.data;
     },
 
     async getPhongBan() {
       const res = await this.$axios.get("/api/danhmucs/dmphongban");
-      //   console.log(data);
+      //   console.log(res);
       this.dmPhongBan = res.data;
     },
 
     async getChiNhanh() {
       const res = await this.$axios.get("/api/danhmucs/dmchinhanh");
-      //   console.log(data);
+      //   console.log(res);
       this.dmChiNhanh = res.data;
     },
 
     async viewHuman(data) {
       this.detailHuman = {};
       this.isActive = true;
-      //   console.log(data);
+      //   console.log(res);
       this.detailHuman = data;
     },
 
