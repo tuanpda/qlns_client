@@ -928,6 +928,47 @@
               </div>
 
               <div class="columns is-multiline">
+                <div class="column is-4">
+                  <label class="label is-small">Thời vụ?</label>
+                  <div class="field">
+                    <label class="switch" style="vertical-align: middle">
+                      <input v-model="detailHuman.isThoiVu" type="checkbox" />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="column is-4">
+                  <label class="label is-small">Nặng nhọc - Độc hại?</label>
+                  <div class="field">
+                    <label class="switch" style="vertical-align: middle">
+                      <input
+                        v-model="detailHuman.isNangNhocDocHai"
+                        type="checkbox"
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="column is-4">
+                  <div class="field">
+                    <label class="label is-small"
+                      >Ngày hợp đồng tính phép</label
+                    >
+                    <div class="control">
+                      <input
+                        v-model="detailHuman.ngayHopDongTinhPhep"
+                        v-mask="'##/####'"
+                        placeholder="MM/YYYY"
+                        class="input is-small"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="columns is-multiline">
                 <div class="column is-3">
                   <div class="field">
                     <label class="label is-small"
@@ -1431,6 +1472,47 @@
                       </div>
                     </div>
                   </template>
+                </div>
+              </div>
+
+              <div class="columns is-multiline">
+                <div class="column is-4">
+                  <label class="label is-small">Thời vụ?</label>
+                  <div class="field">
+                    <label class="switch" style="vertical-align: middle">
+                      <input v-model="formAddNew.isThoiVu" type="checkbox" />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="column is-4">
+                  <label class="label is-small">Nặng nhọc - Độc hại?</label>
+                  <div class="field">
+                    <label class="switch" style="vertical-align: middle">
+                      <input
+                        v-model="formAddNew.isNangNhocDocHai"
+                        type="checkbox"
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="column is-4">
+                  <div class="field">
+                    <label class="label is-small"
+                      >Ngày hợp đồng tính phép</label
+                    >
+                    <div class="control">
+                      <input
+                        v-model="formAddNew.ngayHopDongTinhPhep"
+                        v-mask="'##/####'"
+                        placeholder="MM/YYYY"
+                        class="input is-small"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1945,7 +2027,12 @@
 
 <script>
 import Swal from "sweetalert2";
+import { VueMaskDirective } from "v-mask";
 export default {
+  directives: {
+    mask: VueMaskDirective,
+  },
+
   data() {
     return {
       listNhanSu: [],
@@ -1996,7 +2083,7 @@ export default {
         noiKhaiSinh: "",
         diaChiHoKhau: "",
         diaChiHienNay: "",
-        createdBy: this.$auth.user.username,
+        createdBy: "",
         createdAt: null,
         ghichu: "",
         maNhanVien: "",
@@ -2008,7 +2095,9 @@ export default {
         maChiNhanh: "",
         phongBan: "",
         chiNhanh: "",
-        isthoivu: 0,
+        isThoiVu: 0,
+        isNangNhocDocHai: 0,
+        ngayHopDongTinhPhep: "",
         fileName: "",
         selectedFile: null,
         url: null,
@@ -2017,7 +2106,7 @@ export default {
       isPbCn: 1,
       lockDonvi: false,
 
-      userRole: this.$auth.user.role,
+      userRole: null,
       maPhongBanChange: "",
       tenPhongBanChange: "",
       maChiNhanhChange: "",
@@ -2028,17 +2117,23 @@ export default {
       selectedBrandPb: "",
       selectedBrandCn: "",
 
-      createdBy: this.$auth.user.username,
+      createdBy: "",
     };
   },
 
+  watch: {
+    searchQuery() {
+      this.currentPage = 1;
+    },
+    itemsPerPage() {
+      this.currentPage = 1;
+    },
+  },
+
   computed: {
-    // filteredTable() {
-    //   if (!this.searchQuery) return this.listNhanSu; // Nếu không nhập gì, trả về danh sách gốc
-    //   return this.listNhanSu.filter((item) =>
-    //     item.hoTen.toLowerCase().includes(this.searchQuery.toLowerCase())
-    //   );
-    // },
+    user() {
+      return this.$store.state.modules.users.user.user;
+    },
 
     filteredTable() {
       if (!this.searchQuery) return this.listNhanSu; // Nếu không nhập gì, trả về danh sách gốc
@@ -2112,6 +2207,17 @@ export default {
   },
 
   mounted() {
+    // console.log(this.user);
+
+    const user = this.user;
+    if (user) {
+      this.userRole = user.role;
+      this.createdBy = user.username;
+      this.formAddNew.createdBy = user.username;
+    } else {
+      console.warn("User chưa có dữ liệu!");
+    }
+
     this.getNhansu();
     this.getPhongBan();
     this.getChiNhanh();
@@ -2306,7 +2412,7 @@ export default {
 
     async getNhansu() {
       const res = await this.$axios.get("/api/empl/all-emp");
-      //   console.log(data);
+      // console.log(res);
       this.listNhanSu = res.data;
     },
 
@@ -2346,6 +2452,7 @@ export default {
         "createdAt",
         "maNhanVien",
         "anhHoSo",
+        "ngayHopDongTinhPhep",
         "fileName",
         "selectedFile",
         "url",
@@ -2379,7 +2486,7 @@ export default {
     },
 
     async onSaveAddNew() {
-      if (this.$auth.user.role == 1 || this.$auth.user.role == 2) {
+      if (this.userRole == 1 || this.userRole == 2) {
         // console.log(this.formAddNew);
         const isValid = await this.validateForm();
         if (!isValid) return; // Dừng lại nếu dữ liệu không hợp lệ
@@ -2459,7 +2566,12 @@ export default {
           data.append("maChiNhanh", this.formAddNew.maChiNhanh);
           data.append("phongBan", this.formAddNew.phongBan);
           data.append("chiNhanh", this.formAddNew.chiNhanh);
-          data.append("isthoivu", this.formAddNew.isthoivu);
+          data.append("isThoiVu", this.formAddNew.isThoiVu);
+          data.append("isNangNhocDocHai", this.formAddNew.isNangNhocDocHai);
+          data.append(
+            "ngayHopDongTinhPhep",
+            this.formAddNew.ngayHopDongTinhPhep
+          );
 
           data.append(
             "anhHoSo",
@@ -2484,7 +2596,7 @@ export default {
                 chucNang: "Thêm mới nhân sự",
                 noiDung: `Thêm mới nhân sự: ${this.formAddNew.hoTen}`,
                 createdAt: current,
-                createdBy: this.$auth.user.username,
+                createdBy: this.formAddNew.createdBy,
               };
               await this.$axios.post("/api/empl/read-log-his-system", dataLog);
 
@@ -2513,7 +2625,7 @@ export default {
     },
 
     async onSaveEdit() {
-      if (this.$auth.user.role == 1 || this.$auth.user.role == 2) {
+      if (this.userRole == 1 || this.userRole == 2) {
         const result = await Swal.fire({
           title: `Xác nhận hiệu chỉnh dữ liệu nhân sự ?`,
           showDenyButton: true,
@@ -2588,7 +2700,7 @@ export default {
                 chucNang: "Hiệu chỉnh nhân sự",
                 noiDung: `Hiệu chỉnh nhân sự: ${this.detailHuman.hoTen}`,
                 createdAt: current,
-                createdBy: this.$auth.user.username,
+                createdBy: this.createdBy,
               };
               await this.$axios.post("/api/empl/read-log-his-system", dataLog);
 
@@ -2610,7 +2722,7 @@ export default {
     },
 
     async onDelete(data) {
-      if (this.$auth.user.role == 1 || this.$auth.user.role == 2) {
+      if (this.userRole == 1 || this.userRole == 2) {
         const result = await Swal.fire({
           title: `Xác nhận xoá dữ liệu nhân sự ?`,
           showDenyButton: true,
@@ -2646,7 +2758,7 @@ export default {
                 chucNang: "Xoá nhân sự",
                 noiDung: `Xoá nhân sự: ${data.hoTen}`,
                 createdAt: current,
-                createdBy: this.$auth.user.username,
+                createdBy: this.createdBy,
               };
               await this.$axios.post("/api/empl/read-log-his-system", dataLog);
 

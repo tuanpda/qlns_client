@@ -911,6 +911,37 @@
               </div>
 
               <div class="columns is-multiline">
+                <div class="column is-4">
+                  <label class="label is-small">Nặng nhọc - Độc hại?</label>
+                  <div class="field">
+                    <label class="switch" style="vertical-align: middle">
+                      <input
+                        v-model="detailHuman.isNangNhocDocHai"
+                        type="checkbox"
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="column is-4">
+                  <div class="field">
+                    <label class="label is-small"
+                      >Ngày hợp đồng tính phép</label
+                    >
+                    <div class="control">
+                      <input
+                        v-model="detailHuman.ngayHopDongTinhPhep"
+                        v-mask="'##/####'"
+                        placeholder="MM/YYYY"
+                        class="input is-small"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="columns is-multiline">
                 <div class="column is-3">
                   <div class="field">
                     <label class="label is-small"
@@ -1418,6 +1449,37 @@
               </div>
 
               <div class="columns is-multiline">
+                <div class="column is-4">
+                  <label class="label is-small">Nặng nhọc - Độc hại?</label>
+                  <div class="field">
+                    <label class="switch" style="vertical-align: middle">
+                      <input
+                        v-model="formAddNew.isNangNhocDocHai"
+                        type="checkbox"
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="column is-4">
+                  <div class="field">
+                    <label class="label is-small"
+                      >Ngày hợp đồng tính phép</label
+                    >
+                    <div class="control">
+                      <input
+                        v-model="formAddNew.ngayHopDongTinhPhep"
+                        v-mask="'##/####'"
+                        placeholder="MM/YYYY"
+                        class="input is-small"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="columns is-multiline">
                 <div class="column is-3">
                   <div class="field">
                     <label class="label is-small"
@@ -1763,7 +1825,7 @@ export default {
         noiKhaiSinh: "",
         diaChiHoKhau: "",
         diaChiHienNay: "",
-        createdBy: this.$auth.user.username,
+        createdBy: "",
         createdAt: null,
         ghichu: "",
         maNhanVien: "",
@@ -1775,7 +1837,9 @@ export default {
         maChiNhanh: "",
         phongBan: "",
         chiNhanh: "",
-        isthoivu: 0,
+        isThoiVu: 1,
+        isNangNhocDocHai: 0,
+        ngayHopDongTinhPhep: "",
         fileName: "",
         selectedFile: null,
         url: null,
@@ -1783,11 +1847,24 @@ export default {
 
       isPbCn: 1,
 
-      userRole: this.$auth.user.role,
+      userRole: null,
     };
   },
 
+  watch: {
+    searchQuery() {
+      this.currentPage = 1;
+    },
+    itemsPerPage() {
+      this.currentPage = 1;
+    },
+  },
+
   computed: {
+    user() {
+      return this.$store.state.modules.users.user.user;
+    },
+
     filteredTable() {
       if (!this.searchQuery) return this.listNhanSu; // Nếu không nhập gì, trả về danh sách gốc
       return this.listNhanSu.filter((item) =>
@@ -1852,6 +1929,15 @@ export default {
   },
 
   mounted() {
+    const user = this.user;
+    if (user) {
+      this.userRole = user.role;
+      this.createdBy = user.username;
+      this.formAddNew.createdBy = user.username;
+    } else {
+      console.warn("User chưa có dữ liệu!");
+    }
+
     this.getNhansu();
     this.getPhongBan();
     this.getChiNhanh();
@@ -2008,7 +2094,7 @@ export default {
 
     async getNhansu() {
       const res = await this.$axios.get("/api/empl/all-emp-thoivu");
-      //   console.log(data);
+      console.log(data);
       this.listNhanSu = res.data;
     },
 
@@ -2047,6 +2133,7 @@ export default {
         "diaChiHoKhau",
         "createdAt",
         "maNhanVien",
+        "ngayHopDongTinhPhep",
         "anhHoSo",
         "fileName",
         "selectedFile",
@@ -2161,7 +2248,12 @@ export default {
           data.append("maChiNhanh", this.formAddNew.maChiNhanh);
           data.append("phongBan", this.formAddNew.phongBan);
           data.append("chiNhanh", this.formAddNew.chiNhanh);
-          data.append("isThoiVu", 1);
+          data.append("isThoiVu", this.formAddNew.isThoiVu);
+          data.append("isNangNhocDocHai", this.formAddNew.isNangNhocDocHai);
+          data.append(
+            "ngayHopDongTinhPhep",
+            this.formAddNew.ngayHopDongTinhPhep
+          );
 
           data.append(
             "anhHoSo",

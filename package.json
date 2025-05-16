@@ -11,6 +11,8 @@
   "dependencies": {
     "@nuxtjs/auth-next": "5.0.0-1667386184.dfbbb54",
     "@nuxtjs/axios": "^5.13.6",
+    "chart.js": "^2.9.4",
+    "cookieparser": "^0.1.0",
     "core-js": "^3.25.3",
     "exceljs": "^4.4.0",
     "flatpickr": "^4.6.13",
@@ -24,6 +26,7 @@
     "v-mask": "^2.3.0",
     "vn-num2words": "^1.0.4",
     "vue": "^2.7.10",
+    "vue-chartjs": "^3.5.1",
     "vue-multiselect": "^2.1.9",
     "vue-select": "^3.20.3",
     "vue-server-renderer": "^2.7.10",

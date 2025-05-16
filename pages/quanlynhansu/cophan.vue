@@ -1684,7 +1684,7 @@ export default {
         noiKhaiSinh: "",
         diaChiHoKhau: "",
         diaChiHienNay: "",
-        createdBy: this.$auth.user.username,
+        createdBy: "",
         createdAt: null,
         ghichu: "",
         maNhanVien: "",
@@ -1704,11 +1704,24 @@ export default {
 
       isPbCn: 1,
 
-      userRole: this.$auth.user.role,
+      userRole: null,
     };
   },
 
+  watch: {
+    searchQuery() {
+      this.currentPage = 1;
+    },
+    itemsPerPage() {
+      this.currentPage = 1;
+    },
+  },
+
   computed: {
+    user() {
+      return this.$store.state.modules.users.user.user;
+    },
+
     filteredTable() {
       if (!this.searchQuery) return this.listNhanSu; // Nếu không nhập gì, trả về danh sách gốc
       return this.listNhanSu.filter((item) =>
@@ -1773,6 +1786,17 @@ export default {
   },
 
   mounted() {
+    // console.log(this.user);
+
+    const user = this.user;
+    if (user) {
+      this.userRole = user.role;
+      this.createdBy = user.username;
+      this.formAddNew.createdBy = user.username;
+    } else {
+      console.warn("User chưa có dữ liệu!");
+    }
+
     this.getNhansu();
     this.getPhongBan();
     this.getChiNhanh();
@@ -2002,7 +2026,7 @@ export default {
     },
 
     async onSaveAddNew() {
-      if (this.$auth.user.username == 1 || this.$auth.user.username == 2) {
+      if (this.userRole == 1 || this.userRole == 2) {
         // console.log(this.formAddNew);
         const isValid = await this.validateForm();
         if (!isValid) return; // Dừng lại nếu dữ liệu không hợp lệ
@@ -2126,7 +2150,7 @@ export default {
     },
 
     async onSaveEdit() {
-      if (this.$auth.user.username == 1 || this.$auth.user.username == 2) {
+      if (this.userRole == 1 || this.userRole == 2) {
         const result = await Swal.fire({
           title: `Xác nhận hiệu chỉnh dữ liệu nhân sự ?`,
           showDenyButton: true,
@@ -2210,7 +2234,7 @@ export default {
     },
 
     async onDelete(data) {
-      if (this.$auth.user.username == 1 || this.$auth.user.username == 2) {
+      if (this.userRole == 1 || this.userRole == 2) {
         const result = await Swal.fire({
           title: `Xác nhận xoá dữ liệu nhân sự ?`,
           showDenyButton: true,

@@ -280,7 +280,7 @@ export default {
         maPhongBan: "",
         tenPhongBan: "",
         ghichu: "",
-        createdBy: this.$auth.user.username,
+        createdBy: "",
         createdAt: null,
       },
       formEdit: {
@@ -289,13 +289,25 @@ export default {
         ghichu: "",
       },
 
-      userRole: this.$auth.user.role,
+      userRole: null,
     };
   },
 
-  computed: {},
+  computed: {
+    user() {
+      return this.$store.state.modules.users.user.user;
+    },
+  },
 
   mounted() {
+    const user = this.user;
+    if (user) {
+      this.userRole = user.role;
+      // this.createdBy = user.username;
+    } else {
+      console.warn("User chưa có dữ liệu!");
+    }
+
     this.getPhongban();
   },
 
@@ -311,7 +323,7 @@ export default {
     },
 
     async onSave() {
-      if (this.$auth.user.role == 1 || this.$auth.user.role == 2) {
+      if (this.userRole == 1 || this.userRole == 2) {
         // Kiểm tra dữ liệu trước khi ghi
         if (
           this.formAddNew.maPhongBan == "" ||
@@ -353,7 +365,7 @@ export default {
                 chucNang: "Thêm mới Phòng ban",
                 noiDung: `Thêm mới Phòng ban: ${this.formAddNew.tenPhongBan}`,
                 createdAt: current,
-                createdBy: this.$auth.user.username,
+                createdBy: this.createdBy,
               };
               await this.$axios.post("/api/empl/read-log-his-system", dataLog);
 
@@ -390,7 +402,7 @@ export default {
     },
 
     async onEditApply() {
-      if (this.$auth.user.role == 1 || this.$auth.user.role == 2) {
+      if (this.userRol == 1 || this.userRol == 2) {
         // Kiểm tra dữ liệu trước khi ghi
         if (this.formEdit.maPhongBan == "" || this.formEdit.tenPhongBan == "") {
           Swal.fire({
@@ -429,7 +441,7 @@ export default {
                 chucNang: "Hiệu chỉnh Phòng ban",
                 noiDung: `Hiệu chỉnh Phòng ban: ${this.formEdit.tenPhongBan}`,
                 createdAt: current,
-                createdBy: this.$auth.user.username,
+                createdBy: this.createdBy,
               };
               await this.$axios.post("/api/empl/read-log-his-system", dataLog);
 
@@ -460,7 +472,7 @@ export default {
     },
 
     async onDelete(data) {
-      if (this.$auth.user.role == 1 || this.$auth.user.role == 2) {
+      if (this.userRol == 1 || this.userRol == 2) {
         const result = await Swal.fire({
           title: `Xác nhận xoá phòng ban ?`,
           showDenyButton: true,
@@ -493,7 +505,7 @@ export default {
                 chucNang: "Xoá Phòng ban",
                 noiDung: `Xoá Phòng ban: ${data.tenPhongBan}`,
                 createdAt: current,
-                createdBy: this.$auth.user.username,
+                createdBy: this.createdBy,
               };
               await this.$axios.post("/api/empl/read-log-his-system", dataLog);
 

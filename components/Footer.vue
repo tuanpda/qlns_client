@@ -1,5 +1,7 @@
 <template>
   <footer class="footer">
+    <hr class="navbar-divider" />
+
     <div class="container">
       <div class="columns">
         <div class="column">

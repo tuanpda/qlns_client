@@ -1,10 +1,14 @@
 <template>
-  <nav class="navbar" role="navigation" aria-label="main navigation">
+  <nav
+    class="navbar is-transparent is-info"
+    role="navigation"
+    aria-label="main navigation"
+  >
     <div class="container">
       <div class="navbar-brand">
-        <a href="/" class="navbar-item">
+        <nuxt-link to="/" class="navbar-item">
           <img src="@/assets/logos/logo.svg" width="200" height="100" />
-        </a>
+        </nuxt-link>
 
         <a
           role="button"
@@ -36,16 +40,16 @@
               class="navbar-link"
               @click="toggleDropdown_danhmuc"
               style="
-                /* color: hsl(0deg, 0%, 100%); */
+                color: hsl(0deg, 0%, 100%);
                 font-weight: bold;
-                /* font-size: large; */
+                font-size: large;
               "
             >
-              <span style="color: #ff7f50" class="icon is-small is-left">
-                <i style="font-weight: bold" class="fab fa-gitter"></i>
+              <span class="icon is-small is-left">
+                <i class="fab fa-gitter"></i>
               </span>
               &ensp;
-              <span style="font-weight: bold; color: black">Danh mục</span>
+              <span>Danh mục</span>
             </a>
             <div
               @click="toggleDropdown_danhmuc"
@@ -53,19 +57,19 @@
               v-show="isDropdownOpen_danhmuc"
             >
               <nuxt-link to="/danhmuc/phongban" class="navbar-item">
-                <span style="color: #dc3554" class="icon is-small is-left">
+                <span style="color: #3850b7" class="icon is-small is-left">
                   <i class="fas fa-landmark"></i>
                 </span>
                 &ensp;
-                <span style="font-weight: 500; color: black">Phòng ban</span>
+                <span>Phòng ban</span>
               </nuxt-link>
 
               <nuxt-link to="/danhmuc/chinhanh" class="navbar-item">
-                <span style="color: #dc3554" class="icon is-small is-left">
+                <span style="color: #3850b7" class="icon is-small is-left">
                   <i class="fas fa-code-branch"></i>
                 </span>
                 &ensp;
-                <span style="font-weight: 500; color: black">Chi nhánh</span>
+                <span>Chi nhánh</span>
               </nuxt-link>
             </div>
           </div>
@@ -76,16 +80,16 @@
               class="navbar-link"
               @click="toggleDropdown_danhmuc"
               style="
-                /* color: hsl(0deg, 0%, 100%); */
+                color: hsl(0deg, 0%, 100%);
                 font-weight: bold;
-                /* font-size: large; */
+                font-size: large;
               "
             >
-              <span style="color: #ff7f50" class="icon is-small is-left">
+              <span class="icon is-small is-left">
                 <i style="font-weight: bold" class="fas fa-shield-alt"></i>
               </span>
               &ensp;
-              <span style="font-weight: bold; color: black">Quản lý</span>
+              <span>Quản lý</span>
             </a>
             <div
               @click="toggleDropdown_danhmuc"
@@ -97,7 +101,7 @@
                   <i class="fas fa-id-card"></i>
                 </span>
                 &ensp;
-                <span style="font-weight: 500; color: black">Nhân sự</span>
+                <span>Nhân sự</span>
               </nuxt-link>
 
               <nuxt-link to="/quanlynhansu/laodongthoivu" class="navbar-item">
@@ -105,9 +109,7 @@
                   <i class="fas fa-user-nurse"></i>
                 </span>
                 &ensp;
-                <span style="font-weight: 500; color: black"
-                  >Lao động thời vụ</span
-                >
+                <span>Lao động thời vụ</span>
               </nuxt-link>
 
               <nuxt-link to="/quanlynhansu/nghihuu" class="navbar-item">
@@ -115,7 +117,7 @@
                   <i class="fas fa-user-lock"></i>
                 </span>
                 &ensp;
-                <span style="font-weight: 500; color: black">Nghỉ hưu</span>
+                <span>Nghỉ hưu</span>
               </nuxt-link>
 
               <nuxt-link to="/quanlynhansu/cophan" class="navbar-item">
@@ -123,9 +125,7 @@
                   <i class="far fa-money-bill-alt"></i>
                 </span>
                 &ensp;
-                <span style="font-weight: 500; color: black"
-                  >Danh sách cổ đông</span
-                >
+                <span>Danh sách cổ đông</span>
               </nuxt-link>
 
               <nuxt-link to="/quanlynhansu/tuoinghihuu" class="navbar-item">
@@ -133,9 +133,7 @@
                   <i class="fab fa-wpforms"></i>
                 </span>
                 &ensp;
-                <span style="font-weight: 500; color: black"
-                  >Tuổi nghỉ hưu</span
-                >
+                <span>Tuổi nghỉ hưu</span>
               </nuxt-link>
 
               <nuxt-link to="/quanlynhansu/dangvien" class="navbar-item">
@@ -143,9 +141,7 @@
                   <i class="fa fa-star"></i>
                 </span>
                 &ensp;
-                <span style="font-weight: 500; color: black"
-                  >Danh sách Đảng viên</span
-                >
+                <span>Danh sách Đảng viên</span>
               </nuxt-link>
 
               <nuxt-link to="/quanlynhansu/quanlynghiphep" class="navbar-item">
@@ -153,14 +149,14 @@
                   <i class="fas fa-calendar-alt"></i>
                 </span>
                 &ensp;
-                <span style="font-weight: 500; color: black">Nghỉ phép</span>
+                <span>Nghỉ phép</span>
               </nuxt-link>
             </div>
           </div>
         </div>
 
         <div class="navbar-end">
-          <div v-if="loggedIn" class="navbar-item has-dropdown is-hoverable">
+          <div v-if="user" class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link" @click="toggleDropdown_user"
               ><img
                 :src="user.avatar"
@@ -189,7 +185,7 @@
                 &ensp; Trợ giúp
               </nuxt-link>
               <hr class="navbar-divider" />
-              <template v-if="loggedIn && user.role === 1">
+              <template v-if="user && user.role === 1">
                 <nuxt-link to="/admin/" class="navbar-item">
                   <span class="icon is-small is-left" style="color: #ca1f26">
                     <i class="fab fa-buysellads"></i>
@@ -213,14 +209,14 @@
           <div class="modal-background"></div>
           <div class="modal-content modal-card-predata">
             <section class="modal-card-body box">
-              <div v-if="loggedIn">
+              <div v-if="user">
                 <div class="columns">
                   <div class="column">
                     <div class="field">
                       <label class="label">Tên tài khoản</label>
                       <div class="control">
                         <input
-                          v-model="localUser.username"
+                          v-model="user.username"
                           class="input is-small"
                           type="text"
                           disabled
@@ -233,7 +229,7 @@
                       <label class="label">Họ tên</label>
                       <div class="control">
                         <input
-                          v-model="localUser.name"
+                          v-model="user.name"
                           class="input is-small"
                           type="text"
                           disabled
@@ -248,7 +244,7 @@
                       <label class="label">Email</label>
                       <div class="control">
                         <input
-                          v-model="localUser.email"
+                          v-model="user.email"
                           class="input is-small"
                           type="text"
                         />
@@ -292,7 +288,7 @@
                       <div class="control" style="text-align: center">
                         <div id="preview" class="box">
                           <figure class="image is-128x128">
-                            <img class="is-rounded" :src="localUser.avatar" />
+                            <img class="is-rounded" :src="user.avatar" />
                           </figure>
                         </div>
                       </div>
@@ -337,7 +333,6 @@ export default {
       activeMenu: "", // Thêm thuộc tính activeMenu để lưu trạng thái menu đang được sử dụng
 
       isActive: false,
-      localUser: {},
       changePassword: {
         oldPassword: "",
         newPassword: "",
@@ -347,16 +342,9 @@ export default {
   },
 
   computed: {
-    loggedIn() {
-      return this.$auth.loggedIn;
-    },
     user() {
-      return this.$auth.user;
+      return this.$store.state.modules.users.user.user;
     },
-  },
-
-  mounted() {
-    this.localUser = { ...this.user };
   },
 
   methods: {
@@ -378,7 +366,7 @@ export default {
     },
 
     async updateUser() {
-      // console.log(this.localUser);
+      // console.log(this.user);
       if (this.changePassword.oldPassword !== "") {
         if (this.changePassword.newPassword === "") {
           const Toast = Swal.mixin({
@@ -418,8 +406,8 @@ export default {
             });
           } else {
             const dataUpdate = {
-              _id: this.localUser._id,
-              email: this.localUser.email,
+              _id: this.user._id,
+              email: this.user.email,
               password: this.changePassword.oldPassword,
               newPassword: this.changePassword.newPassword,
             };
@@ -470,8 +458,8 @@ export default {
         }
       } else {
         const dataUpdate = {
-          _id: this.localUser._id,
-          email: this.localUser.email,
+          _id: this.user._id,
+          email: this.user.email,
         };
         try {
           const res = await this.$axios.post(

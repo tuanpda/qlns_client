@@ -48,7 +48,7 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     "@nuxtjs/axios",
-    "@nuxtjs/auth-next",
+    // "@nuxtjs/auth-next",
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -58,9 +58,9 @@ export default {
     // baseURL: "http://192.168.160.7:2612", // máy chủ nhân hoà
     // baseURL: "http://14.224.129.177:1552", // máy chủ tuanpda
     // baseURL: "http://27.73.37.94:1552", // máy chủ phủ diễn
-    baseURL: "http://localhost:1552",
+    baseURL: "http://localhost:1975",
     timeout: 20000,
-    // credentials: true,
+    credentials: true,
   },
 
   server: {
@@ -93,37 +93,37 @@ export default {
     },
   },
 
-  auth: {
-    strategies: {
-      custom: {
-        scheme: "~/nuxtAuthSchema/CustomScheme.js",
-        endpoints: {
-          login: {
-            url: "/api/auth/access/login",
-            method: "post",
-            propertyName: false,
-          },
-          // refresh: { url: '/api/auth/refresh', method: 'post' },
-          user: { url: "/api/users/auth/user", method: "get" },
-        },
-        // token: {
-        //   property: "access_token",
-        //   global: true,
-        //   required: true,
-        //   type: "Bearer",
-        // },
-        user: {
-          property: "user",
-          autoFetch: true,
-        },
-      },
-    },
+  // auth: {
+  //   strategies: {
+  //     custom: {
+  //       scheme: "~/nuxtAuthSchema/CustomScheme.js",
+  //       endpoints: {
+  //         login: {
+  //           url: "/api/auth/access/login",
+  //           method: "post",
+  //           propertyName: false,
+  //         },
+  //         // refresh: { url: '/api/auth/refresh', method: 'post' },
+  //         user: { url: "/api/users/auth/user", method: "get" },
+  //       },
+  //       // token: {
+  //       //   property: "access_token",
+  //       //   global: true,
+  //       //   required: true,
+  //       //   type: "Bearer",
+  //       // },
+  //       user: {
+  //         property: "user",
+  //         autoFetch: true,
+  //       },
+  //     },
+  //   },
 
-    watchLoggedIn: true, // Cập nhật trạng thái đăng nhập
-    redirect: {
-      login: "/login",
-      logout: "/login",
-      home: "/",
-    },
-  },
+  //   watchLoggedIn: true, // Cập nhật trạng thái đăng nhập
+  //   redirect: {
+  //     login: "/login",
+  //     logout: "/login",
+  //     home: "/",
+  //   },
+  // },
 };
