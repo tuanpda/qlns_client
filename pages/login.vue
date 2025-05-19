@@ -161,8 +161,6 @@ export default {
         );
         // console.log(comitLogin.success);
         if (comitLogin.success == true) {
-          console.log("vào");
-
           this.$router.push("/");
         }
       } catch (error) {

@@ -51,10 +51,10 @@
               ></i>
             </div>
             <div class="footer-row" style="font-size: small; font-weight: 700">
-              <span>About</span>
-              <span>FAQ</span>
-              <span>Contact</span>
-              <span>Blog</span>
+              <span
+                >Hệ thống Quản lý nhân sự - CT TNHH Môi trường Đô Thị Hà
+                Tĩnh</span
+              >
             </div>
           </div>
         </div>

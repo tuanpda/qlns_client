@@ -262,6 +262,10 @@ export default {
 
             return {
               ten: nv.hoTen,
+              isphongban: nv.isphongban,
+              ischinhanh: nv.ischinhanh,
+              maPhongBan: nv.maPhongBan,
+              maChiNhanh: nv.maChiNhanh,
               phongBan: nv.phongBan,
               chiNhanh: nv.chiNhanh,
               ngayHopDongTinhPhep: nv.ngayHopDongTinhPhep,
