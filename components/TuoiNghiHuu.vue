@@ -200,6 +200,8 @@
                 font-size: small;
                 text-align: center;
                 vertical-align: middle;
+                font-weight: 600;
+                color: #0d6efd;
               "
             >
               {{ item.soNgayConLai }}
@@ -702,10 +704,15 @@ export default {
 
           // Lấy ngày hiện tại
           const todayNow = new Date();
-          const futureDate = new Date(todayNow);
+          // const futureDate = new Date(todayNow);
+          const futureDate = new Date(
+            namNghihuuDunghan,
+            thangNghihuDunghan - 1,
+            1
+          );
 
           // Cộng số tháng còn lại vào ngày hiện tại
-          futureDate.setMonth(futureDate.getMonth() + thangConLaiNghiHuu);
+          // futureDate.setMonth(futureDate.getMonth() + thangConLaiNghiHuu);
 
           // Lấy ngày, tháng, năm nghỉ hưu
           const ngayNghiHuu = futureDate.getDate();
@@ -716,7 +723,11 @@ export default {
 
           // Tính số ngày còn lại đến ngày nghỉ hưu
           const timeDiff = futureDate.getTime() - todayNow.getTime();
-          const soNgayConLai = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+          let soNgayConLai = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+          // Xử lý nếu soNgayConLai là NaN
+          if (isNaN(soNgayConLai)) {
+            soNgayConLai = 0;
+          }
 
           // console.log(
           //   `Ngày nghỉ hưu chính xác: ${ngayNghiHuu}/${thangNghiHuu}/${namNghiHuu}`
