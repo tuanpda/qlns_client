@@ -30,9 +30,6 @@
                 <td style="text-align: center; color: white">Email</td>
                 <td style="text-align: center; color: white">Điện thoại</td>
                 <td style="text-align: center; color: white">Quyền</td>
-                <td style="text-align: center; width: 40%; color: white">
-                  Địa chỉ
-                </td>
                 <td style="text-align: center; color: white">Tình trạng</td>
                 <td style="text-align: center; color: white">Cập nhật</td>
                 <td style="text-align: center; color: white">Xóa</td>
@@ -66,9 +63,6 @@
                   <template v-if="item.role === 1">
                     <span>Quản trị viên</span>
                   </template>
-                </td>
-                <td style="text-align: left">
-                  {{ item.diachi }}
                 </td>
                 <td style="text-align: center">
                   <span v-if="item.active === false">
@@ -336,7 +330,6 @@ export default {
   name: "AddUserAdminPage",
   layout: "admin",
   middleware: "auth", // middleware for authentication
-  middleware: "super-admin", // middleware for authentication with the admin
   components: {},
 
   data() {
@@ -357,15 +350,6 @@ export default {
       isLoading: false,
       url: null,
       form: {
-        matinh: "",
-        tentinh: "",
-        mahuyen: "",
-        tenhuyen: "",
-        maxa: "",
-        tenxa: "",
-        madaily: "",
-        tendaily: "",
-        diachi: "",
         cccd: "",
         sodienthoai: "",
         email: "",
@@ -375,10 +359,8 @@ export default {
         role: 4, // nomal user
         avatar: "http://localhost:3000/avatar/default-image.png",
         active: 0,
-        createdBy: this.$auth.user.username,
-        createdAt: null,
-        updatedBy: "",
-        updatedAt: "",
+        createdBy: "",
+        createdAt: "",
         ghichu: "",
       },
       // sort and pagi
@@ -390,6 +372,13 @@ export default {
   },
 
   mounted() {
+    const user = this.user;
+    if (user) {
+      this.createdBy = user.username;
+    } else {
+      console.warn("User chưa có dữ liệu!");
+    }
+
     this.fetchDataUsers();
   },
 
@@ -400,6 +389,10 @@ export default {
   },
 
   computed: {
+    user() {
+      return this.$store.state.modules.users.user.user;
+    },
+
     sortedTable() {
       return this.users_data.sort((a, b) => {
         if (a[this.sortKey] < b[this.sortKey]) return -1 * this.sortDirection;
@@ -667,7 +660,7 @@ export default {
     },
 
     async onDelete(data) {
-      if (this.$auth.user.role === 1) {
+      if (this.user.role === 1) {
         const result = await Swal.fire({
           title: `Xác nhận xóa tài khoản này? Sẽ không thể lấy lại!`,
           showDenyButton: true,

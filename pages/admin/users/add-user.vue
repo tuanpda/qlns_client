@@ -564,8 +564,8 @@ export default {
         role: 4, // nomal user
         avatar: "http://ansinhbhxh.online:4042/avatar/default-image.jpg",
         active: 0,
-        createdBy: this.$auth.user.username,
-        createdAt: null,
+        createdBy: "",
+        createdAt: "",
         updatedBy: "",
         updatedAt: "",
       },
@@ -586,6 +586,13 @@ export default {
   },
 
   mounted() {
+    const user = this.user;
+    if (user) {
+      this.form.createdBy = user.username;
+    } else {
+      console.warn("User chưa có dữ liệu!");
+    }
+
     this.fetchDataUsers();
   },
 
@@ -596,6 +603,10 @@ export default {
   },
 
   computed: {
+    user() {
+      return this.$store.state.modules.users.user.user;
+    },
+
     // load data from the store
     // ...mapState("modules/users", ["users"]),
     ...mapState("modules/danhmucs", ["dm_Tinhs"]),
@@ -1011,20 +1022,7 @@ export default {
         this.form.createdAt = current;
 
         let data = new FormData();
-        data.append("matochuc", this.form.matochuc);
-        data.append("tentochuc", this.form.tentochuc);
-        data.append("matinh", this.form.matinh);
-        data.append("tentinh", this.form.tentinh);
-        data.append("mahuyen", this.form.mahuyen);
-        data.append("tenhuyen", this.form.tenhuyen);
-        data.append("maxa", this.form.maxa);
-        data.append("tenxa", this.form.tenxa);
-        data.append("madaily", this.form.maxa);
-        data.append("tendaily", this.form.tenxa);
-        data.append("nvcongty", this.form.nvcongty);
-        data.append("diachi", this.form.diachi);
         data.append("cccd", this.form.cccd);
-        data.append("masobhxh", this.form.masobhxh);
         data.append("sodienthoai", this.form.sodienthoai);
         data.append("email", this.form.email);
         data.append("username", this.form.cccd);
@@ -1039,11 +1037,7 @@ export default {
         data.append("active", this.form.active);
         data.append("createdAt", this.form.createdAt);
         data.append("createdBy", this.form.createdBy);
-        data.append("updatedAt", this.form.updatedAt);
-        data.append("updatedBy", this.form.updatedBy);
-        data.append("res_sent", this.form.res_sent);
-        data.append("macqbhxh", "04013");
-        data.append("tencqbhxh", "Bảo hiểm xã hội huyện Diễn Châu");
+        data.append("ghichu", this.form.ghichu);
 
         try {
           const response = await this.$store.dispatch(
