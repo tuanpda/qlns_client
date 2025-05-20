@@ -66,9 +66,10 @@ export default {
   server: {
     port: 2612,
     // host: "192.168.160.7", // server nhân hòa
-    host: "14.224.129.177", // server tuanpda
+    // host: "14.224.129.177", // server tuanpda
     // host: "localhost",
     // host: "192.168.1.97",
+    host:"0.0.0.0"
   },
 
   // server: {
