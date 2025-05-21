@@ -300,6 +300,8 @@ export default {
               nv.ngayHopDongTinhPhep,
               nv.isNangNhocDocHai
             );
+            // console.log(ngayPhep);
+
             const tongDaNghi = Object.values(thang).reduce((a, b) => a + b, 0);
             const conLai = ngayPhep - tongDaNghi;
 
@@ -324,11 +326,18 @@ export default {
       const [thangStr, namStr] = ngayBatDau.split("/");
       const thang = parseInt(thangStr, 10);
       const nam = parseInt(namStr, 10);
+      // console.log("Năm hiện tại:", namHienTai);
 
       if (nam === namHienTai) return 13 - thang;
       const soNam = namHienTai - nam;
+      // console.log("Số năm:", soNam);
+
       const heSo = Math.floor(soNam / 5);
-      return (isNangNhocDocHai === 0 ? 12 : 14) + heSo;
+      // console.log("hệ số:", heSo);
+
+      // console.log("check kiểu:", typeof isNangNhocDocHai);
+
+      return (isNangNhocDocHai ? 14 : 12) + heSo;
     },
 
     capNhatPhep(nv) {

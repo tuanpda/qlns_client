@@ -495,6 +495,7 @@ export default {
     this.getNhansu();
     this.getPhongBan();
     this.getChiNhanh();
+    this.test();
   },
 
   methods: {
@@ -555,12 +556,12 @@ export default {
           limitYearWomen = 1975;
 
         // Giới hạn tuổi nghỉ hưu nặng nhọc độc hại
-        const limitNowYearVehuu_Men_Nhdh = 52;
-        const limitNowYearVehuu_Women_Nndh = 50;
+        const limitNowYearVehuu_Men_Nhdh = 57;
+        const limitNowYearVehuu_Women_Nndh = 55;
         const limitMonthMen_Nndh = 4,
-          limitYearMen_Nndh = 1976;
+          limitYearMen_Nndh = 1971;
         const limitMonthWomen_Nndh = 5,
-          limitYearWomen_Nndh = 1985;
+          limitYearWomen_Nndh = 1980;
 
         // Hàm tính tuổi theo năm & tháng
         function calculateAge(day, month, year) {
@@ -607,7 +608,7 @@ export default {
               (birthYear === limitYearMen_Nndh &&
                 birthMonth >= limitMonthMen_Nndh)
             ) {
-              namNghihuuDunghan = birthYear + limitNowYearVehuu_Men_Nhdh;
+              namNghihuuDunghan = birthYear + limitNowYearVehuu_Men - 5;
               thangNghihuDunghan = birthMonth + 1;
               // console.log(limitNowYearVehuu_Men_Nhdh);
 
@@ -630,7 +631,7 @@ export default {
               (birthYear === limitYearWomen_Nndh &&
                 birthMonth >= limitMonthWomen_Nndh)
             ) {
-              namNghihuuDunghan = birthYear + limitNowYearVehuu_Women_Nndh;
+              namNghihuuDunghan = birthYear + limitNowYearVehuu_Women - 5;
               thangNghihuDunghan = birthMonth + 1;
               tuoiNghiHuu135 = limitNowYearVehuu_Women_Nndh;
             } else {
@@ -706,14 +707,28 @@ export default {
         // console.log(`Tháng nghỉ hưu: ${thangNghihuDunghan}`);
         // console.log(tuoiNghiHuu135);
 
-        // Tính số tháng còn lại đến khi nghỉ hưu
-        const today = new Date();
-        const currentYear = today.getFullYear();
-        const currentMonth = today.getMonth() + 1;
+        // Tính số tháng còn lại đến khi nghỉ hưu (tính chính xác hơn theo ngày)
+        function calculateMonthsUntilRetirement(year, month) {
+          const today = new Date();
+          const retirementDate = new Date(year, month - 1, 1); // Date: month là 0-based
 
-        const remainingMonths =
-          (namNghihuuDunghan - currentYear) * 12 +
-          (thangNghihuDunghan - currentMonth);
+          const diffInMonths =
+            (retirementDate.getFullYear() - today.getFullYear()) * 12 +
+            (retirementDate.getMonth() - today.getMonth());
+
+          // Nếu hôm nay đã qua ngày 1 thì chưa đủ 1 tháng nữa → trừ đi 1
+          if (today.getDate() > 1) {
+            return diffInMonths - 1;
+          }
+
+          return diffInMonths;
+        }
+
+        const remainingMonths = calculateMonthsUntilRetirement(
+          namNghihuuDunghan,
+          thangNghihuDunghan
+        );
+
         // console.log(
         //   `Số tháng còn lại đến khi nghỉ hưu: ${remainingMonths} tháng`
         // );
@@ -775,7 +790,7 @@ export default {
           tuoiHienNayNam: `${age.years} năm`,
           tuoiHienNayThang: `${age.months} tháng`,
           tongThangTuoi: age.totalMonths,
-          thangConLaiNghiHuu,
+          thangConLaiNghiHuu: remainingMonths,
           ngayNghiChinhXac: `${ngayNghiHuu}/${thangNghiHuu}/${namNghiHuu}`,
           soNgayConLai: soNgayConLai,
           tuoiNghiHuu135: tuoiNghiHuu135,
@@ -798,6 +813,20 @@ export default {
     },
 
     async test() {
+      const res = await this.$axios.get("/api/empl/all-emp-tinhtuoinghihuu");
+
+      let birthDay = 19;
+      let birthMonth = 5;
+      let birthYear = 1972;
+      let gender = 0;
+      let isNangNhocDocHai = 1;
+
+      // console.log(
+      //   `Ngày sinh: ${birthDay}, Tháng sinh: ${
+      //     birthMonth - 1
+      //   }, Năm sinh: ${birthYear}`
+      // );
+
       // Giới hạn tuổi nghỉ hưu
       const limitNowYearVehuu_Men = 62;
       const limitNowYearVehuu_Women = 60;
@@ -806,193 +835,239 @@ export default {
       const limitMonthWomen = 5,
         limitYearWomen = 1975;
 
-      let birthYear = 1972;
-      let birthMonth = 5;
-      let gender = 0;
+      // Giới hạn tuổi nghỉ hưu nặng nhọc độc hại
+      const limitNowYearVehuu_Men_Nhdh = 57;
+      const limitNowYearVehuu_Women_Nndh = 55;
+      const limitMonthMen_Nndh = 4,
+        limitYearMen_Nndh = 1971;
+      const limitMonthWomen_Nndh = 5,
+        limitYearWomen_Nndh = 1980;
+
+      // Hàm tính tuổi theo năm & tháng
+      function calculateAge(day, month, year) {
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const currentMonth = today.getMonth() + 1;
+        const currentDay = today.getDate();
+
+        let ageYears = currentYear - year;
+        let ageMonths = currentMonth - month;
+
+        if (ageMonths < 0) {
+          ageYears--;
+          ageMonths += 12;
+        }
+        if (currentDay < day) {
+          ageMonths--;
+          if (ageMonths < 0) {
+            ageMonths = 11;
+            ageYears--;
+          }
+        }
+
+        return {
+          years: ageYears,
+          months: ageMonths,
+          totalMonths: ageYears * 12 + ageMonths,
+        };
+      }
+
+      // Tính tuổi hiện tại
+      const age = calculateAge(birthDay, birthMonth, birthYear);
+
+      // console.log(age);
 
       let thangNghihuDunghan, namNghihuuDunghan, tuoiNghiHuu135;
-      let data = gender === 1 ? huuNam : huuNu;
 
-      // console.log(typeof gender);
-
-      // Xác định năm & tháng nghỉ hưu
-      // Xác định năm và tháng nghỉ hưu
-      if (gender === 1) {
-        if (
-          birthYear > limitYearMen ||
-          (birthYear === limitYearMen && birthMonth >= limitMonthMen)
-        ) {
-          console.log("k có trong 135");
-
-          namNghihuuDunghan = birthYear + limitNowYearVehuu_Men;
-          thangNghihuDunghan = birthMonth + 1;
-          tuoiNghiHuu135 = 62;
+      // Chia ra 2 trường hợp. 1 là người trong nặng nhọc độc hại, 2 là người ở điều kiện bt
+      // 1. nếu nặng nhọc độc hại
+      // console.log(isNangNhocDocHai);
+      if (isNangNhocDocHai == 1) {
+        let data = gender === 1 ? huuNam_Nndh : huuNu_Nndh;
+        if (gender === 1) {
+          if (
+            birthYear > limitYearMen_Nndh ||
+            (birthYear === limitYearMen_Nndh &&
+              birthMonth >= limitMonthMen_Nndh)
+          ) {
+            namNghihuuDunghan = birthYear + limitNowYearVehuu_Men - 5;
+            thangNghihuDunghan = birthMonth + 1;
+            console.log(namNghihuuDunghan);
+            console.log(thangNghihuDunghan);
+            tuoiNghiHuu135 = limitNowYearVehuu_Men_Nhdh;
+            console.log(tuoiNghiHuu135);
+          } else {
+            const result = data.find(
+              (item) =>
+                item.thang === birthMonth.toString() &&
+                item.namSinh === birthYear.toString()
+            );
+            if (result) {
+              namNghihuuDunghan = result.namHuongHuu;
+              thangNghihuDunghan = result.thangHuongHuu;
+              tuoiNghiHuu135 = result.tuoiNghiHuu;
+              console.log(namNghihuuDunghan);
+              console.log(thangNghihuDunghan);
+              console.log(tuoiNghiHuu135);
+            }
+          }
         } else {
-          console.log("có trong 135");
-          // console.log(data);
-
-          const result = data.find(
-            (item) =>
-              item.thang === birthMonth.toString() &&
-              item.namSinh === birthYear.toString()
-          );
-          console.log(result);
-
-          if (result) {
-            namNghihuuDunghan = result.namHuongHuu;
-            thangNghihuDunghan = result.thangHuongHuu;
-            tuoiNghiHuu135 = result.tuoiNghiHuu;
+          if (
+            birthYear > limitYearWomen_Nndh ||
+            (birthYear === limitYearWomen_Nndh &&
+              birthMonth >= limitMonthWomen_Nndh)
+          ) {
+            namNghihuuDunghan = birthYear + limitNowYearVehuu_Women - 5;
+            thangNghihuDunghan = birthMonth + 1;
+            tuoiNghiHuu135 = limitNowYearVehuu_Women_Nndh;
+            console.log(namNghihuuDunghan);
+            console.log(thangNghihuDunghan);
+            console.log(tuoiNghiHuu135);
+          } else {
+            const result = data.find(
+              (item) =>
+                item.thang === birthMonth.toString() &&
+                item.namSinh === birthYear.toString()
+            );
+            if (result) {
+              namNghihuuDunghan = result.namHuongHuu;
+              thangNghihuDunghan = result.thangHuongHuu;
+              tuoiNghiHuu135 = result.tuoiNghiHuu;
+              console.log(namNghihuuDunghan);
+              console.log(thangNghihuDunghan);
+              console.log(tuoiNghiHuu135);
+            }
           }
         }
       } else {
-        if (
-          birthYear > limitYearWomen ||
-          (birthYear === limitYearWomen && birthMonth >= limitMonthWomen)
-        ) {
-          namNghihuuDunghan = birthYear + limitNowYearVehuu_Women;
-          thangNghihuDunghan = birthMonth + 1;
-          tuoiNghiHuu135 = 62;
+        let data = gender === 1 ? huuNam : huuNu;
+
+        // console.log(typeof gender);
+
+        // Xác định năm & tháng nghỉ hưu
+        // Xác định năm và tháng nghỉ hưu
+        if (gender === 1) {
+          if (
+            birthYear > limitYearMen ||
+            (birthYear === limitYearMen && birthMonth >= limitMonthMen)
+          ) {
+            namNghihuuDunghan = birthYear + limitNowYearVehuu_Men;
+            thangNghihuDunghan = birthMonth + 1;
+            tuoiNghiHuu135 = limitNowYearVehuu_Men;
+          } else {
+            const result = data.find(
+              (item) =>
+                item.thang === birthMonth.toString() &&
+                item.namSinh === birthYear.toString()
+            );
+            if (result) {
+              namNghihuuDunghan = result.namHuongHuu;
+              thangNghihuDunghan = result.thangHuongHuu;
+              tuoiNghiHuu135 = result.tuoiNghiHuu;
+            }
+          }
         } else {
-          const result = data.find(
-            (item) =>
-              item.thang === birthMonth.toString() &&
-              item.namSinh === birthYear.toString()
-          );
-          if (result) {
-            namNghihuuDunghan = result.namHuongHuu;
-            thangNghihuDunghan = result.thangHuongHuu;
-            tuoiNghiHuu135 = result.tuoiNghiHuu;
+          if (
+            birthYear > limitYearWomen ||
+            (birthYear === limitYearWomen && birthMonth >= limitMonthWomen)
+          ) {
+            namNghihuuDunghan = birthYear + limitNowYearVehuu_Women;
+            thangNghihuDunghan = birthMonth + 1;
+            tuoiNghiHuu135 = limitNowYearVehuu_Women;
+          } else {
+            const result = data.find(
+              (item) =>
+                item.thang === birthMonth.toString() &&
+                item.namSinh === birthYear.toString()
+            );
+            if (result) {
+              namNghihuuDunghan = result.namHuongHuu;
+              thangNghihuDunghan = result.thangHuongHuu;
+              tuoiNghiHuu135 = result.tuoiNghiHuu;
+            }
           }
         }
       }
 
-      console.log(`Năm nghỉ hưu: ${namNghihuuDunghan}`);
-      console.log(`Tháng nghỉ hưu: ${thangNghihuDunghan}`);
-      console.log(tuoiNghiHuu135);
-
-      // const gender = 0;
-
-      // // Giới hạn tuổi nghỉ hưu
-      // const limitNowYearVehuu_Men = 62;
-      // const limitNowYearVehuu_Women = 60;
-
-      // // Giới hạn tháng năm sinh áp dụng tuổi hưu khác nhau
-      // const limitMonthMen = 4,
-      //   limitYearMen = 1966;
-      // const limitMonthWomen = 5,
-      //   limitYearWomen = 1975;
-
-      // // Biến lưu tháng & năm nghỉ hưu
-      // let thangNghihuDunghan, namNghihuuDunghan;
-      // let data = gender === 1 ? huuNam : huuNu;
-
-      // // Hàm tính tuổi theo năm và tháng
-      // function calculateAge(day, month, year) {
-      //   const today = new Date();
-      //   const currentYear = today.getFullYear();
-      //   const currentMonth = today.getMonth() + 1; // `getMonth()` trả về từ 0-11
-      //   const currentDay = today.getDate();
-
-      //   let ageYears = currentYear - year;
-      //   let ageMonths = currentMonth - month;
-
-      //   // Điều chỉnh nếu tháng hiện tại nhỏ hơn tháng sinh
-      //   if (ageMonths < 0) {
-      //     ageYears--;
-      //     ageMonths += 12;
-      //   }
-
-      //   // Điều chỉnh nếu ngày hiện tại nhỏ hơn ngày sinh
-      //   if (currentDay < day) {
-      //     ageMonths--;
-      //     if (ageMonths < 0) {
-      //       ageMonths = 11;
-      //       ageYears--;
-      //     }
-      //   }
-
-      //   return {
-      //     years: ageYears,
-      //     months: ageMonths,
-      //     totalMonths: ageYears * 12 + ageMonths,
-      //   };
-      // }
-
-      // // Test với ngày sinh cụ thể
-      // const birthDay = 7,
-      //   birthMonth = 1,
-      //   birthYear = 1984;
-      // const age = calculateAge(birthDay, birthMonth, birthYear);
-
-      // console.log(`Tuổi hiện tại: ${age.years} tuổi, ${age.months} tháng`);
-      // console.log(`Tuổi tính theo tháng: ${age.totalMonths} tháng`);
-
-      // // Xác định năm và tháng nghỉ hưu
-      // if (gender === 1) {
-      //   if (
-      //     birthYear > limitYearMen ||
-      //     (birthYear === limitYearMen && birthMonth >= limitMonthMen)
-      //   ) {
-      //     namNghihuuDunghan = birthYear + limitNowYearVehuu_Men;
-      //     thangNghihuDunghan = birthMonth + 1;
-      //   } else {
-      //     const result = data.find(
-      //       (item) => item.thang === birthMonth && item.namSinh === birthYear
-      //     );
-      //     if (result) {
-      //       namNghihuuDunghan = result.namHuongHuu;
-      //       thangNghihuDunghan = result.thangHuongHuu;
-      //     }
-      //   }
-      // } else {
-      //   if (
-      //     birthYear > limitYearWomen ||
-      //     (birthYear === limitYearWomen && birthMonth >= limitMonthWomen)
-      //   ) {
-      //     namNghihuuDunghan = birthYear + limitNowYearVehuu_Women;
-      //     thangNghihuDunghan = birthMonth + 1;
-      //   } else {
-      //     const result = data.find(
-      //       (item) => item.thang === birthMonth && item.namSinh === birthYear
-      //     );
-      //     if (result) {
-      //       namNghihuuDunghan = result.namHuongHuu;
-      //       thangNghihuDunghan = result.thangHuongHuu;
-      //     }
-      //   }
-      // }
-
-      // // **Xử lý tháng vượt quá 12**
-      // if (thangNghihuDunghan > 12) {
-      //   thangNghihuDunghan -= 12;
-      //   namNghihuuDunghan += 1;
-      // }
+      // **Xử lý tháng vượt quá 12**
+      if (thangNghihuDunghan > 12) {
+        thangNghihuDunghan -= 12;
+        namNghihuuDunghan += 1;
+      }
 
       // console.log(`Năm nghỉ hưu: ${namNghihuuDunghan}`);
       // console.log(`Tháng nghỉ hưu: ${thangNghihuDunghan}`);
+      // console.log(tuoiNghiHuu135);
 
-      // // Tính số tháng còn lại đến khi nghỉ hưu
-      // const today = new Date();
-      // const currentYear = today.getFullYear();
-      // const currentMonth = today.getMonth() + 1;
+      // Tính số tháng còn lại đến khi nghỉ hưu (tính chính xác hơn theo ngày)
+      function calculateMonthsUntilRetirement(year, month) {
+        const today = new Date();
+        const retirementDate = new Date(year, month - 1, 1); // Date: month là 0-based
 
-      // const remainingMonths =
-      //   (namNghihuuDunghan - currentYear) * 12 +
-      //   (thangNghihuDunghan - currentMonth);
+        const diffInMonths =
+          (retirementDate.getFullYear() - today.getFullYear()) * 12 +
+          (retirementDate.getMonth() - today.getMonth());
+
+        // Nếu hôm nay đã qua ngày 1 thì chưa đủ 1 tháng nữa → trừ đi 1
+        if (today.getDate() > 1) {
+          return diffInMonths - 1;
+        }
+
+        return diffInMonths;
+      }
+
+      const remainingMonths = calculateMonthsUntilRetirement(
+        namNghihuuDunghan,
+        thangNghihuDunghan
+      );
+
+      console.log(
+        `Số tháng còn lại đến khi nghỉ hưu: ${remainingMonths} tháng`
+      );
+
+      // **Tính số tháng đến tuổi nghỉ hưu**
+      const retirementAgeMonths =
+        gender === 1
+          ? limitNowYearVehuu_Men * 12
+          : limitNowYearVehuu_Women * 12;
+      const thangConLaiNghiHuu = retirementAgeMonths - age.totalMonths;
+
+      // Lấy ngày hiện tại
+      const todayNow = new Date();
+      // const futureDate = new Date(todayNow);
+      // Tạo mốc thời điểm đến tháng hưởng hưu (ví dụ: mốc 01/tháng/năm)
+      const futureDate = new Date(namNghihuuDunghan, thangNghihuDunghan - 1, 1);
+
+      // Cộng số tháng còn lại vào ngày hiện tại
+      // futureDate.setMonth(futureDate.getMonth() + thangConLaiNghiHuu);
+
+      // Lấy ngày, tháng, năm nghỉ hưu
+      const ngayNghiHuu = futureDate.getDate();
+      const thangNghiHuu = futureDate.getMonth() + 1; // Vì getMonth() trả về từ 0-11
+      const namNghiHuu = futureDate.getFullYear();
+
+      // tính số ngày còn lại
+
+      // Tính số ngày còn lại đến ngày nghỉ hưu
+      const timeDiff = futureDate.getTime() - todayNow.getTime();
+      let soNgayConLai = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+      // Xử lý nếu soNgayConLai là NaN
+      if (isNaN(soNgayConLai)) {
+        soNgayConLai = 0;
+      }
+
       // console.log(
-      //   `Số tháng còn lại đến khi nghỉ hưu: ${remainingMonths} tháng`
+      //   `Ngày nghỉ hưu chính xác: ${ngayNghiHuu}/${thangNghiHuu}/${namNghiHuu}`
       // );
 
-      // // **Tính số tháng đến tuổi nghỉ hưu**
-      // const retirementAgeMonths =
-      //   gender === 1
-      //     ? limitNowYearVehuu_Men * 12
-      //     : limitNowYearVehuu_Women * 12;
-      // const monthsToRetirementAge = retirementAgeMonths - age.totalMonths;
-
       // console.log(
-      //   `Số tháng còn lại để đạt tuổi nghỉ hưu: ${monthsToRetirementAge} tháng`
+      //   `Số tháng còn lại để đạt tuổi nghỉ hưu: ${thangConLaiNghiHuu} tháng`
       // );
+
+      const startDate = new Date(birthYear, birthMonth - 1, birthDay);
+      const totalDays = Math.ceil(
+        (futureDate - startDate) / (1000 * 60 * 60 * 24)
+      );
     },
   },
 };
