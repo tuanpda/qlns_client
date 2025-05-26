@@ -6,7 +6,7 @@
           <i class="far fa-money-bill-alt"></i>
         </span>
         <span style="font-weight: bold; font-size: large"
-          >Danh sách nghỉ hưu là cổ đông</span
+          >Danh sách Cổ đông công ty</span
         >
       </div>
 

@@ -6,7 +6,7 @@
           <i class="fas fa-user-lock"></i>
         </span>
         <span style="font-weight: bold; font-size: large"
-          >Danh sách nghỉ hưu</span
+          >Danh sách đã nghỉ việc</span
         >
       </div>
 

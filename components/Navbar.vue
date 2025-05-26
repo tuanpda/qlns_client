@@ -117,7 +117,7 @@
                   <i class="fas fa-user-lock"></i>
                 </span>
                 &ensp;
-                <span>Nghỉ hưu</span>
+                <span>Đã nghỉ việc</span>
               </nuxt-link>
 
               <nuxt-link to="/quanlynhansu/cophan" class="navbar-item">

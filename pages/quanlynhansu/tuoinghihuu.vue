@@ -162,17 +162,28 @@
                 "
               >
                 <span
-                  style="
-                    font-weight: bold;
-                    background-color: #dc3545;
-                    color: white;
-                    padding-left: 7px;
-                    padding-right: 7px;
-                    padding-top: 2px;
-                    padding-bottom: 2px;
+                  v-if="
+                    item.thoiDiemNghiHuu === 'undefined/undefined' ||
+                    item.thoiDiemNghiHuu === 'NaN'
                   "
-                  >{{ item.thangConLaiNghiHuu }}</span
                 >
+                  0
+                </span>
+                <span
+                  v-else
+                  :style="{
+                    fontWeight: 'bold',
+                    backgroundColor:
+                      item.thangConLaiNghiHuu < 0 ? '#ffc107' : '#dc3545',
+                    color: item.thangConLaiNghiHuu < 0 ? '#000' : '#fff',
+                    paddingLeft: '7px',
+                    paddingRight: '7px',
+                    paddingTop: '2px',
+                    paddingBottom: '2px',
+                  }"
+                >
+                  {{ item.thangConLaiNghiHuu }}
+                </span>
               </td>
 
               <td
@@ -222,13 +233,13 @@
                 {{ item.ngayNghiChinhXac }}
               </td> -->
               <td
-                style="
-                  font-size: small;
-                  text-align: center;
-                  vertical-align: middle;
-                  font-weight: 600;
-                  color: #0d6efd;
-                "
+                :style="{
+                  fontSize: 'small',
+                  textAlign: 'center',
+                  verticalAlign: 'middle',
+                  fontWeight: 600,
+                  color: item.soNgayConLai < 0 ? 'orange' : '#0d6efd',
+                }"
               >
                 {{ item.soNgayConLai }}
               </td>
@@ -623,6 +634,10 @@ export default {
                 namNghihuuDunghan = result.namHuongHuu;
                 thangNghihuDunghan = result.thangHuongHuu;
                 tuoiNghiHuu135 = result.tuoiNghiHuu;
+              } else {
+                namNghihuuDunghan = "2021";
+                thangNghihuDunghan = "Trước tháng 5";
+                tuoiNghiHuu135 = 55;
               }
             }
           } else {
@@ -644,6 +659,10 @@ export default {
                 namNghihuuDunghan = result.namHuongHuu;
                 thangNghihuDunghan = result.thangHuongHuu;
                 tuoiNghiHuu135 = result.tuoiNghiHuu;
+              } else {
+                namNghihuuDunghan = "2021";
+                thangNghihuDunghan = "Trước tháng 6";
+                tuoiNghiHuu135 = 50;
               }
             }
           }
@@ -815,10 +834,10 @@ export default {
     async test() {
       const res = await this.$axios.get("/api/empl/all-emp-tinhtuoinghihuu");
 
-      let birthDay = 19;
+      let birthDay = 11;
       let birthMonth = 5;
-      let birthYear = 1972;
-      let gender = 0;
+      let birthYear = 1965;
+      let gender = 1;
       let isNangNhocDocHai = 1;
 
       // console.log(
@@ -875,7 +894,7 @@ export default {
       // Tính tuổi hiện tại
       const age = calculateAge(birthDay, birthMonth, birthYear);
 
-      // console.log(age);
+      console.log(age);
 
       let thangNghihuDunghan, namNghihuuDunghan, tuoiNghiHuu135;
 
@@ -886,7 +905,7 @@ export default {
         let data = gender === 1 ? huuNam_Nndh : huuNu_Nndh;
         if (gender === 1) {
           if (
-            birthYear > limitYearMen_Nndh ||
+            birthYear > limitYearMen_Nndh || // 1965 < 1966
             (birthYear === limitYearMen_Nndh &&
               birthMonth >= limitMonthMen_Nndh)
           ) {
@@ -908,6 +927,13 @@ export default {
               tuoiNghiHuu135 = result.tuoiNghiHuu;
               console.log(namNghihuuDunghan);
               console.log(thangNghihuDunghan);
+              console.log(tuoiNghiHuu135);
+            } else {
+              namNghihuuDunghan = birthYear + limitNowYearVehuu_Men - 5;
+              thangNghihuDunghan = birthMonth + 1;
+              console.log(namNghihuuDunghan);
+              console.log(thangNghihuDunghan);
+              tuoiNghiHuu135 = limitNowYearVehuu_Men_Nhdh;
               console.log(tuoiNghiHuu135);
             }
           }
