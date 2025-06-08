@@ -361,8 +361,17 @@ export default {
     },
 
     async logout() {
-      await this.$auth.logout(); // Đảm bảo rằng đăng xuất đã hoàn thành trước khi chuyển hướng
-      this.$router.push("/login"); // Chuyển hướng đến trang login sau khi đăng xuất
+      try {
+        await this.$axios.$post("/api/auth/logout");
+
+        // ✅ Cập nhật store: xóa user trong module 'users'
+        this.$store.commit("setUser", {});
+
+        // ✅ Điều hướng về trang login
+        this.$router.push("/login");
+      } catch (error) {
+        console.error("Logout error:", error);
+      }
     },
 
     async updateUser() {
