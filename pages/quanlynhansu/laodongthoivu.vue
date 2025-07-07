@@ -502,7 +502,7 @@
                     class="far fa-hourglass"
                     style="color: #fd7e14; margin-right: 5px"
                   ></i>
-                  <strong>Thời hạn bắt đầu hợp đồng:</strong>
+                  <strong>Thời gian bắt đầu HĐ:</strong>
                   <span style="font-weight: bold; color: #0d6efd">{{
                     detailHuman.thoiHanHd_Batdau || "Không có"
                   }}</span>
@@ -513,7 +513,7 @@
                     class="fas fa-flag-checkered"
                     style="color: #fd7e14; margin-right: 5px"
                   ></i>
-                  <strong>Thời hạn kết thúc hợp đồng:</strong>
+                  <strong>Thời gian kết thúc HĐ:</strong>
                   <span style="font-weight: bold; color: #0d6efd">{{
                     detailHuman.thoiHanHd_Ketthuc || "Không có"
                   }}</span>
@@ -670,7 +670,7 @@
                     class="fas fa-map"
                     style="color: #198754; margin-right: 5px"
                   ></i>
-                  <strong>Địa chỉ hộ khẩu:</strong>
+                  <strong>Địa chỉ thường trú:</strong>
                   <span style="font-weight: bold; color: #0d6efd">{{
                     detailHuman.diaChiHoKhau || "Không có"
                   }}</span>
@@ -681,7 +681,7 @@
                     class="fas fa-home"
                     style="color: #198754; margin-right: 5px"
                   ></i>
-                  <strong>Địa chỉ thường trú:</strong>
+                  <strong>Địa chỉ chỗ ở hiện tại:</strong>
                   <span style="font-weight: bold; color: #0d6efd">{{
                     detailHuman.diaChiHienNay || "Không có"
                   }}</span>
@@ -738,16 +738,33 @@
               </div>
 
               <div class="columns is-multiline">
-                <div class="column is-4">
+                <div class="column">
                   <label class="label is-small">Đang làm - Thôi việc?</label>
-                  <div class="field">
+                  <!-- <div class="field">
                     <label class="switch" style="vertical-align: middle">
                       <input v-model="detailHuman.status" type="checkbox" />
                       <span class="slider"></span>
                     </label>
+                  </div> -->
+                  <div class="field">
+                    <Button
+                      @click="xuLyNghiViec"
+                      class="button is-small is-danger"
+                      >Xử lý</Button
+                    >
                   </div>
                 </div>
-                <div class="column is-4">
+                <div class="column">
+                  <label class="label is-small">Chuyển lên chính thức?</label>
+                  <div class="field">
+                    <Button
+                      @click="chuyenChinhthuc"
+                      class="button is-small is-success"
+                      >Chuyển chính thức</Button
+                    >
+                  </div>
+                </div>
+                <div class="column">
                   <div class="field">
                     <label class="label is-small">Dân tộc</label>
                     <div class="control">
@@ -759,7 +776,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="column is-4">
+                <div class="column">
                   <div class="field">
                     <label class="label is-small">Dân tộc</label>
                     <div class="control">
@@ -989,7 +1006,7 @@
 
                 <div class="column is-3">
                   <div class="field">
-                    <label class="label is-small">Thời hạn bắt đầu</label>
+                    <label class="label is-small">Thời gian bắt đầu HĐ</label>
                     <div class="control">
                       <input
                         v-model="detailHuman.thoiHanHd_Batdau"
@@ -1002,7 +1019,7 @@
 
                 <div class="column is-3">
                   <div class="field">
-                    <label class="label is-small">Thời hạn kết thúc</label>
+                    <label class="label is-small">Thời gian kết thúc HĐ</label>
                     <div class="control">
                       <input
                         v-model="detailHuman.thoiHanHd_Ketthuc"
@@ -1149,7 +1166,7 @@
               </div>
 
               <div class="field">
-                <label class="label is-small">Địa chỉ hộ khẩu</label>
+                <label class="label is-small">Địa chỉ thường trú</label>
                 <div class="control">
                   <input
                     v-model="detailHuman.diaChiHoKhau"
@@ -1160,7 +1177,7 @@
               </div>
 
               <div class="field">
-                <label class="label is-small">Địa chỉ thường trú</label>
+                <label class="label is-small">Địa chỉ chỗ ở hiện tại</label>
                 <div class="control">
                   <input
                     v-model="detailHuman.diaChiHienNay"
@@ -1527,7 +1544,7 @@
 
                 <div class="column is-3">
                   <div class="field">
-                    <label class="label is-small">Thời hạn bắt đầu</label>
+                    <label class="label is-small">Thời gian bắt đầu HĐ</label>
                     <div class="control">
                       <input
                         v-model="formAddNew.thoiHanHd_Batdau"
@@ -1540,7 +1557,7 @@
 
                 <div class="column is-3">
                   <div class="field">
-                    <label class="label is-small">Thời hạn kết thúc</label>
+                    <label class="label is-small">Thời gian kết thúc HĐ</label>
                     <div class="control">
                       <input
                         v-model="formAddNew.thoiHanHd_Ketthuc"
@@ -1687,7 +1704,7 @@
               </div>
 
               <div class="field">
-                <label class="label is-small">Địa chỉ hộ khẩu</label>
+                <label class="label is-small">Địa chỉ thường trú</label>
                 <div class="control">
                   <input
                     v-model="formAddNew.diaChiHoKhau"
@@ -1698,7 +1715,7 @@
               </div>
 
               <div class="field">
-                <label class="label is-small">Địa chỉ thường trú</label>
+                <label class="label is-small">Địa chỉ chỗ ở hiện tại</label>
                 <div class="control">
                   <input
                     v-model="formAddNew.diaChiHienNay"
@@ -1789,6 +1806,197 @@
         </div>
       </div>
     </div>
+
+    <!-- modal xử lý nghỉ việc -->
+    <div class="">
+      <div :class="{ 'is-active': isActive_Nghiviec }" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content modal-card-change box" style="height: 500px">
+          <section class="modal-card-body">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <div>
+                <span style="color: #198754" class="icon is-small is-left">
+                  <i class="fas fa-crop-alt"></i>
+                </span>
+                <span style="font-weight: bold"
+                  >Xử lý Nhân sự nghỉ việc - nghỉ hưu?</span
+                >
+              </div>
+              <div>
+                <button
+                  @click="isActive_Nghiviec = false"
+                  class="button is-small is-info"
+                >
+                  Thoát
+                </button>
+              </div>
+            </div>
+
+            <hr class="navbar-divider" />
+
+            <div v-if="detailHuman" style="margin-top: 10px">
+              <div class="field">
+                <label class="label">Họ tên</label>
+                <div class="control">
+                  <input
+                    v-model="detailHuman.hoTen"
+                    ref="nameInput"
+                    class="input"
+                    type="text"
+                    disabled
+                  />
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label">Lý do nghỉ việc</label>
+                <div class="control">
+                  <input
+                    v-model="detailHuman.lyDoNghiViec"
+                    ref="nameInput"
+                    class="input"
+                    type="text"
+                  />
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label">Thời điểm nghỉ việc</label>
+                <div class="control">
+                  <input
+                    v-model="detailHuman.thoiDiemNghi"
+                    ref="nameInput"
+                    class="input"
+                    type="date"
+                  />
+                </div>
+              </div>
+
+              <hr />
+
+              <div class="field is-grouped-function">
+                <div class="control">
+                  <button @click="capNhatNghiViec" class="button is-success">
+                    Lưu dữ liệu
+                  </button>
+                </div>
+                &nbsp;
+                <div class="control">
+                  <button
+                    @click="isActive_Nghiviec = false"
+                    class="button is-danger"
+                  >
+                    Thoát
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- modal chuyển chính thức -->
+    <div class="">
+      <div :class="{ 'is-active': isActive_Chuyenchinhthuc }" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content modal-card-change box" style="height: 500px">
+          <section class="modal-card-body">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <div>
+                <span style="color: #198754" class="icon is-small is-left">
+                  <i class="fas fa-crop-alt"></i>
+                </span>
+                <span style="font-weight: bold">Chuyển chính thức</span>
+              </div>
+              <div>
+                <button
+                  @click="isActive_Nghiviec = false"
+                  class="button is-small is-info"
+                >
+                  Thoát
+                </button>
+              </div>
+            </div>
+
+            <hr class="navbar-divider" />
+
+            <div v-if="detailHuman" style="margin-top: 10px">
+              <div class="field">
+                <label class="label">Họ tên</label>
+                <div class="control">
+                  <input
+                    v-model="detailHuman.hoTen"
+                    ref="nameInput"
+                    class="input"
+                    type="text"
+                    disabled
+                  />
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label">Lý do nghỉ việc</label>
+                <div class="control">
+                  <input
+                    v-model="detailHuman.lyDoNghiViec"
+                    ref="nameInput"
+                    class="input"
+                    type="text"
+                  />
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="label">Thời điểm nghỉ việc</label>
+                <div class="control">
+                  <input
+                    v-model="detailHuman.thoiDiemNghi"
+                    ref="nameInput"
+                    class="input"
+                    type="date"
+                  />
+                </div>
+              </div>
+
+              <hr />
+
+              <div class="field is-grouped-function">
+                <div class="control">
+                  <button
+                    @click="onSaveChuyenchinhthuc"
+                    class="button is-success"
+                  >
+                    Lưu dữ liệu
+                  </button>
+                </div>
+                &nbsp;
+                <div class="control">
+                  <button
+                    @click="isActive_Chuyenchinhthuc = false"
+                    class="button is-danger"
+                  >
+                    Thoát
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -1813,6 +2021,8 @@ export default {
       isActive: false,
       isActive_Edit: false,
       isActive_AddNew: false,
+      isActive_Nghiviec: false,
+      isActive_Chuyenchinhthuc: false,
       isLoading: false,
 
       fileName: "",
@@ -2325,6 +2535,73 @@ export default {
         }
       }
     },
+
+    async xuLyNghiViec() {
+      this.isActive_Nghiviec = true;
+      // console.log(this.detailHuman);
+    },
+
+    chuyenChinhthuc() {
+      this.isActive_Chuyenchinhthuc = true;
+    },
+
+    async capNhatNghiViec() {
+      const dateInput = this.detailHuman.thoiDiemNghi; // nhập từ input type="date"
+      const lyDo = this.detailHuman.lyDoNghiViec;
+
+      if (!dateInput || !lyDo) {
+        await Swal.fire({
+          icon: "warning",
+          title: "Thiếu thông tin",
+          text: "Vui lòng chọn ngày nghỉ và nhập lý do nghỉ việc.",
+          confirmButtonText: "OK",
+        });
+        return;
+      }
+
+      // Chuyển từ yyyy-mm-dd → dd/mm/yyyy
+      const [year, month, day] = dateInput.split("-");
+      const thoiDiemNghi = `${day}/${month}/${year}`;
+
+      const dataUpdate = {
+        _id: this.detailHuman._id,
+        thoiDiemNghi,
+        lyDoNghiViec: lyDo,
+      };
+
+      const result = await Swal.fire({
+        title: `Xác nhận lưu dữ liệu ?`,
+        showDenyButton: true,
+        confirmButtonText: "Xác nhận",
+        denyButtonText: `Hủy`,
+      });
+      if (result.isConfirmed) {
+        try {
+          const res_update = await this.$axios.post(
+            `/api/empl/update-nghi-viec`,
+            dataUpdate
+          );
+          // console.log(res_update);
+          if (res_update.data.success == true) {
+            await Swal.fire({
+              icon: "success",
+              title: "Thành công",
+              text: "Đã cập nhật thông tin nghỉ việc.",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+
+            this.isActive_Nghiviec = false;
+            this.getNhansu();
+          }
+        } catch (error) {
+          console.error("Lỗi khi cập nhật nghỉ việc:", error);
+          alert("Đã có lỗi xảy ra khi cập nhật.");
+        }
+      }
+    },
+
+    async onSaveChuyenchinhthuc() {},
 
     async editHuman(data) {
       //   console.log(data);

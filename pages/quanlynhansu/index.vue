@@ -1023,7 +1023,7 @@
 
                 <div class="column is-3">
                   <div class="field">
-                    <label class="label is-small">Thời hạn bắt đầu</label>
+                    <label class="label is-small">Thời gian bắt đầu HĐ</label>
                     <div class="control">
                       <input
                         v-model="detailHuman.thoiHanHd_Batdau"
@@ -1036,7 +1036,7 @@
 
                 <div class="column is-3">
                   <div class="field">
-                    <label class="label is-small">Thời hạn kết thúc</label>
+                    <label class="label is-small">Thời gian kết thúc HĐ</label>
                     <div class="control">
                       <input
                         v-model="detailHuman.thoiHanHd_Ketthuc"
@@ -1183,7 +1183,7 @@
               </div>
 
               <div class="field">
-                <label class="label is-small">Địa chỉ hộ khẩu</label>
+                <label class="label is-small">Địa chỉ thường trú</label>
                 <div class="control">
                   <input
                     v-model="detailHuman.diaChiHoKhau"
@@ -1194,7 +1194,7 @@
               </div>
 
               <div class="field">
-                <label class="label is-small">Địa chỉ thường trú</label>
+                <label class="label is-small">Địa chỉ chỗ ở hiện tại</label>
                 <div class="control">
                   <input
                     v-model="detailHuman.diaChiHienNay"
@@ -1347,7 +1347,6 @@
                         v-model="formAddNew.status"
                         type="checkbox"
                       />
-                      <span class="slider"></span>
                     </label>
                   </div>
                 </div>
@@ -1571,7 +1570,7 @@
 
                 <div class="column is-3">
                   <div class="field">
-                    <label class="label is-small">Thời hạn bắt đầu</label>
+                    <label class="label is-small">Thời hạn bắt đầu HĐ</label>
                     <div class="control">
                       <input
                         v-model="formAddNew.thoiHanHd_Batdau"
@@ -1584,7 +1583,7 @@
 
                 <div class="column is-3">
                   <div class="field">
-                    <label class="label is-small">Thời hạn kết thúc</label>
+                    <label class="label is-small">Thời hạn kết thúc HĐ</label>
                     <div class="control">
                       <input
                         v-model="formAddNew.thoiHanHd_Ketthuc"
@@ -1731,7 +1730,7 @@
               </div>
 
               <div class="field">
-                <label class="label is-small">Địa chỉ hộ khẩu</label>
+                <label class="label is-small">Địa chỉ thường trú</label>
                 <div class="control">
                   <input
                     v-model="formAddNew.diaChiHoKhau"
@@ -1742,7 +1741,7 @@
               </div>
 
               <div class="field">
-                <label class="label is-small">Địa chỉ thường trú</label>
+                <label class="label is-small">Địa chỉ chỗ ở hiện tại</label>
                 <div class="control">
                   <input
                     v-model="formAddNew.diaChiHienNay"
@@ -1779,9 +1778,7 @@
                       <span class="file-icon">
                         <i class="fas fa-upload"></i>
                       </span>
-                      <span class="file-label">
-                        Chọn ảnh hồ sơ(Bắt buộc chọn)
-                      </span>
+                      <span class="file-label"> Chọn ảnh hồ sơ </span>
                     </span>
                     <span class="file-name">
                       {{ formAddNew.fileName }}
@@ -2626,17 +2623,18 @@ export default {
         // console.log(this.formAddNew.fileName);
         // console.log(this.formAddNew.selectedFile);
 
-        if (
-          this.formAddNew.fileName == "" ||
-          this.formAddNew.selectedFile == null
-        ) {
-          await Swal.fire({
-            title: "Lỗi nhập liệu!",
-            text: `Yêu cầu phải có ảnh của hồ sơ`,
-            icon: "warning",
-          });
-          return;
-        }
+        // người dùng không cần bắt buộc
+        // if (
+        //   this.formAddNew.fileName == "" ||
+        //   this.formAddNew.selectedFile == null
+        // ) {
+        //   await Swal.fire({
+        //     title: "Lỗi nhập liệu!",
+        //     text: `Yêu cầu phải có ảnh của hồ sơ`,
+        //     icon: "warning",
+        //   });
+        //   return;
+        // }
 
         const result = await Swal.fire({
           title: `Xác nhận thêm nhân sự ?`,
