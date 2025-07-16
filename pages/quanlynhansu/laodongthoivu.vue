@@ -1906,7 +1906,7 @@
     <div class="">
       <div :class="{ 'is-active': isActive_Chuyenchinhthuc }" class="modal">
         <div class="modal-background"></div>
-        <div class="modal-content modal-card-change box" style="height: 500px">
+        <div class="modal-content modal-card-change box" style="height: 300px">
           <section class="modal-card-body">
             <div
               style="
@@ -1920,14 +1920,6 @@
                   <i class="fas fa-crop-alt"></i>
                 </span>
                 <span style="font-weight: bold">Chuyển chính thức</span>
-              </div>
-              <div>
-                <button
-                  @click="isActive_Nghiviec = false"
-                  class="button is-small is-info"
-                >
-                  Thoát
-                </button>
               </div>
             </div>
 
@@ -1947,30 +1939,6 @@
                 </div>
               </div>
 
-              <div class="field">
-                <label class="label">Lý do nghỉ việc</label>
-                <div class="control">
-                  <input
-                    v-model="detailHuman.lyDoNghiViec"
-                    ref="nameInput"
-                    class="input"
-                    type="text"
-                  />
-                </div>
-              </div>
-
-              <div class="field">
-                <label class="label">Thời điểm nghỉ việc</label>
-                <div class="control">
-                  <input
-                    v-model="detailHuman.thoiDiemNghi"
-                    ref="nameInput"
-                    class="input"
-                    type="date"
-                  />
-                </div>
-              </div>
-
               <hr />
 
               <div class="field is-grouped-function">
@@ -1979,7 +1947,7 @@
                     @click="onSaveChuyenchinhthuc"
                     class="button is-success"
                   >
-                    Lưu dữ liệu
+                    Xác nhận chuyển
                   </button>
                 </div>
                 &nbsp;
@@ -2601,7 +2569,44 @@ export default {
       }
     },
 
-    async onSaveChuyenchinhthuc() {},
+    async onSaveChuyenchinhthuc() {
+      // gọi hàm api tích chọn isThoiVu=0
+      const dataUpdate = {
+        _id: this.detailHuman._id,
+      };
+
+      const result = await Swal.fire({
+        title: `Xác nhận chuyển lên chính thức?`,
+        showDenyButton: true,
+        confirmButtonText: "Xác nhận",
+        denyButtonText: `Hủy`,
+      });
+      if (result.isConfirmed) {
+        try {
+          const res_update = await this.$axios.post(
+            `/api/empl/chuyen-chinh-thuc`,
+            dataUpdate
+          );
+          // console.log(res_update);
+          if (res_update.data.success == true) {
+            await Swal.fire({
+              icon: "success",
+              title: "Thành công",
+              text: "Đã chuyển lên chính thức",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+
+            this.isActive_Edit = false;
+            this.isActive_Chuyenchinhthuc = false;
+            this.getNhansu();
+          }
+        } catch (error) {
+          console.error("Lỗi ghi dữ liệu:", error);
+          alert("Đã có lỗi xảy ra khi cập nhật.");
+        }
+      }
+    },
 
     async editHuman(data) {
       //   console.log(data);

@@ -24,14 +24,23 @@
             <!-- <div class="control">
               <button class="button is-info">Tìm kiếm</button>
             </div> -->
-            <!-- <div class="control">
+            <div class="control">
               <button @click="addNewHuman" class="button is-success is-small">
                 Thêm mới
               </button>
-            </div> -->
+            </div>
           </div>
         </div>
       </div>
+    </div>
+
+    <div>
+      <p style="padding: 5px; font-size: 15px">
+        Tổng số cổ đông: <strong>{{ countCodong.tongSoCodong }}</strong
+        ><br />
+        Tổng cổ phần:
+        <strong>{{ countCodong.tongCoPhan.toLocaleString() }}</strong>
+      </p>
     </div>
 
     <div class="box">
@@ -46,7 +55,9 @@
               </th>
               <th style="font-size: small; text-align: center">Họ tên</th>
               <th style="font-size: small; text-align: center">Đơn vị</th>
-              <th style="font-size: small; text-align: center">Cổ đông</th>
+              <th style="font-size: small; text-align: center">
+                Căn cước công dân
+              </th>
               <th style="font-size: small; text-align: center">Địa chỉ</th>
               <th style="font-size: small; text-align: center">
                 Số cổ phần tự do
@@ -56,6 +67,7 @@
               </th>
               <th style="font-size: small; text-align: center">Tổng</th>
               <th style="font-size: small; text-align: center">Ghi chu</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -134,6 +146,39 @@
                 "
               >
                 {{ item.ghichu }}
+              </td>
+              <td style="text-align: center; vertical-align: middle">
+                <a
+                  @click="
+                    userRole == 1 || userRole == 2 ? editHuman(item) : null
+                  "
+                  :class="{ 'disabled-link': userRole !== 1 && userRole !== 2 }"
+                  :title="
+                    userRole == 1 || userRole == 2
+                      ? 'Hiệu chỉnh hồ sơ'
+                      : 'Bạn không có quyền chỉnh sửa'
+                  "
+                >
+                  <span style="color: #0d6efd" class="icon is-small is-left">
+                    <i class="fa fa-pencil"></i>
+                  </span>
+                </a>
+                &ensp;
+                <a
+                  @click="
+                    userRole == 1 || userRole == 2 ? onDelete(item) : null
+                  "
+                  :class="{ 'disabled-link': userRole !== 1 && userRole !== 2 }"
+                  :title="
+                    userRole == 1 || userRole == 2
+                      ? 'Xoá'
+                      : 'Bạn không có quyền xoá'
+                  "
+                >
+                  <span style="color: red" class="icon is-small is-left">
+                    <i class="fa fa-trash"></i>
+                  </span>
+                </a>
               </td>
             </tr>
           </tbody>
@@ -791,7 +836,7 @@
                         <div class="select is-fullwidth is-small">
                           <select
                             @change="phongBanChange_Edit"
-                            v-model="detailHuman.maPhongBan"
+                            v-model="detailHuman.maPhong"
                           >
                             <option
                               v-for="pb in dmPhongBan"
@@ -1055,30 +1100,6 @@
                 </div>
               </div>
 
-              <div class="field">
-                <label class="label is-small">Ảnh đại diện</label>
-                <div class="file is-small has-name is-info">
-                  <label class="file-label">
-                    <input
-                      ref="fileInput"
-                      @change="onFileChange"
-                      class="file-input"
-                      type="file"
-                      name="resume"
-                    />
-                    <span class="file-cta">
-                      <span class="file-icon">
-                        <i class="fas fa-upload"></i>
-                      </span>
-                      <span class="file-label"> Sửa lại ảnh đại diện </span>
-                    </span>
-                    <span class="file-name">
-                      {{ fileName }}
-                    </span>
-                  </label>
-                </div>
-              </div>
-
               <div class="columns">
                 <div class="column">
                   <div class="field">
@@ -1132,11 +1153,10 @@
       </div>
     </div>
 
-    <!-- modal add new human -->
     <div class="">
-      <div :class="{ 'is-active': isActive_AddNew }" class="modal">
+      <div :class="{ 'is-active': isActive_Edit }" class="modal">
         <div class="modal-background"></div>
-        <div class="modal-content modal-card-edit box">
+        <div class="modal-content modal-card-addnew box">
           <section class="modal-card-body">
             <div
               style="
@@ -1149,11 +1169,11 @@
                 <span style="color: #ff7f50" class="icon is-small is-left">
                   <i class="fas fa-highlighter"></i>
                 </span>
-                <span style="font-weight: bold">Thêm mới nhân sự</span>
+                <span style="font-weight: bold">Hiệu chỉnh hồ sơ</span>
               </div>
               <div>
                 <button
-                  @click="isActive_AddNew = false"
+                  @click="isActive_Edit = false"
                   class="button is-small is-info"
                 >
                   Thoát
@@ -1164,65 +1184,27 @@
             <hr class="navbar-divider" />
 
             <div style="margin-top: 10px">
-              <div class="field">
-                <label class="label is-small">Họ tên</label>
-                <div class="control">
-                  <input
-                    v-model="formAddNew.hoTen"
-                    ref="nameInput"
-                    class="input is-small"
-                    type="text"
-                  />
-                </div>
-              </div>
-
               <div class="columns is-multiline">
-                <div class="column is-4">
-                  <label class="label is-small">Đang làm - Thôi việc?</label>
+                <div class="column">
                   <div class="field">
-                    <label class="switch" style="vertical-align: middle">
-                      <input
-                        disabled
-                        v-model="formAddNew.status"
-                        type="checkbox"
-                      />
-                      <span class="slider"></span>
-                    </label>
-                  </div>
-                </div>
-                <div class="column is-4">
-                  <div class="field">
-                    <label class="label is-small">Dân tộc</label>
+                    <label class="label is-small">Họ tên</label>
                     <div class="control">
                       <input
-                        v-model="formAddNew.danToc"
+                        v-model="detailHuman.hoTen"
+                        ref="nameInput"
                         class="input is-small"
                         type="text"
                       />
                     </div>
                   </div>
                 </div>
-                <div class="column is-4">
-                  <div class="field">
-                    <label class="label is-small">Tôn giáo</label>
-                    <div class="control">
-                      <input
-                        v-model="formAddNew.tonGiao"
-                        class="input is-small"
-                        type="text"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
 
-              <div class="columns is-multiline">
-                <div class="column is-4">
+                <div class="column">
                   <div class="field">
-                    <label class="label is-small">Số điện thoại</label>
+                    <label class="label is-small">Số căn cước công dân</label>
                     <div class="control">
                       <input
-                        v-model="formAddNew.soDienThoai"
+                        v-model="detailHuman.soCccd"
                         class="input is-small"
                         type="number"
                         maxlength="12"
@@ -1233,12 +1215,28 @@
                   </div>
                 </div>
 
-                <div class="column is-4">
+                <div class="column">
                   <div class="field">
-                    <label class="label is-small">Ngày sinh</label>
+                    <label class="label is-small">Ngày cấp</label>
                     <div class="control">
                       <input
-                        v-model="formAddNew.ngaySinh"
+                        v-model="detailHuman.ngayCap"
+                        class="input is-small"
+                        type="text"
+                        ref="ngaysinhInput"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="columns is-multiline">
+                <div class="column">
+                  <div class="field">
+                    <label class="label is-small">Địa chỉ</label>
+                    <div class="control">
+                      <input
+                        v-model="detailHuman.diaChi"
                         class="input is-small"
                         type="text"
                         ref="ngaysinhInput"
@@ -1247,37 +1245,22 @@
                   </div>
                 </div>
 
-                <div class="column is-4">
+                <div class="column">
                   <div class="field">
-                    <label class="label is-small">Giới tính</label>
-                    <div class="control">
-                      <div class="select is-small is-fullwidth">
-                        <select v-model="formAddNew.gioiTinh">
-                          <option value="" disabled>Chọn giới tính</option>
-                          <option value="1">Nam</option>
-                          <option value="0">Nữ</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="columns is-multiline">
-                <div class="column is-3">
-                  <div class="field">
-                    <label class="label is-small">Vị trí công tác</label>
+                    <label class="label is-small">Ghi chú</label>
                     <div class="control">
                       <input
-                        v-model="formAddNew.viTriCongTac"
+                        v-model="detailHuman.ghichu"
                         class="input is-small"
                         type="text"
                       />
                     </div>
                   </div>
                 </div>
+              </div>
 
-                <div class="column is-3">
+              <div class="columns is-multiline">
+                <div class="column">
                   <div class="field">
                     <label class="label is-small"
                       >Phòng ban / Chi nhánh ?</label
@@ -1292,20 +1275,17 @@
                     </div>
                   </div>
                 </div>
-                <div class="column is-6">
+                <div class="column">
                   <template v-if="isPbCn == 1">
                     <div class="field">
                       <label class="label is-small">Chọn Phòng ban</label>
                       <div class="control">
                         <div class="select is-fullwidth is-small">
-                          <select
-                            @change="phongBanChange"
-                            v-model="formAddNew.maPhongBan"
-                          >
+                          <select v-model="detailHuman.donVi">
                             <option
                               v-for="pb in dmPhongBan"
                               :key="pb.maPhongBan"
-                              :value="pb.maPhongBan"
+                              :value="pb.tenPhongBan"
                             >
                               {{ pb.tenPhongBan }}
                             </option>
@@ -1319,16 +1299,13 @@
                       <label class="label is-small">Chọn Chi nhánh</label>
                       <div class="control">
                         <div class="select is-fullwidth is-small">
-                          <select
-                            @change="chiNhanhChange"
-                            v-model="formAddNew.maChiNhanh"
-                          >
+                          <select v-model="detailHuman.donVi">
                             <option
-                              v-for="pb in dmChiNhanh"
-                              :key="pb.maChiNhanh"
-                              :value="pb.maChiNhanh"
+                              v-for="cn in dmChiNhanh"
+                              :key="cn.maChiNhanh"
+                              :value="cn.tenChiNhanh"
                             >
-                              {{ pb.tenChiNhanh }}
+                              {{ cn.tenChiNhanh }}
                             </option>
                           </select>
                         </div>
@@ -1339,269 +1316,306 @@
               </div>
 
               <div class="columns is-multiline">
-                <div class="column is-3">
-                  <div class="field">
-                    <label class="label is-small"
-                      >Thời gian bắt đầu TG BHXH</label
-                    >
-                    <div class="control">
-                      <input
-                        v-model="formAddNew.thoiGianBatdauTgBhxh"
-                        class="input is-small"
-                        type="text"
-                      />
-                    </div>
-                  </div>
+                <div class="column">
+                  <label class="label is-small">Cổ phần tự do</label>
+                  <input
+                    v-model="detailHuman.cophantudo"
+                    class="input is-small"
+                    type="number"
+                  />
                 </div>
-
-                <div class="column is-3">
-                  <div class="field">
-                    <label class="label is-small">Loại hợp đồng</label>
-                    <div class="control">
-                      <input
-                        v-model="formAddNew.loaiHd"
-                        class="input is-small"
-                        type="text"
-                      />
-                    </div>
-                  </div>
+                <div class="column">
+                  <label class="label is-small">Cổ phần hạn chế</label>
+                  <input
+                    v-model="detailHuman.cophanhanche"
+                    class="input is-small"
+                    type="number"
+                  />
                 </div>
-
-                <div class="column is-3">
-                  <div class="field">
-                    <label class="label is-small">Thời hạn bắt đầu</label>
-                    <div class="control">
-                      <input
-                        v-model="formAddNew.thoiHanHd_Batdau"
-                        class="input is-small"
-                        type="text"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div class="column is-3">
-                  <div class="field">
-                    <label class="label is-small">Thời hạn kết thúc</label>
-                    <div class="control">
-                      <input
-                        v-model="formAddNew.thoiHanHd_Ketthuc"
-                        class="input is-small"
-                        type="text"
-                      />
-                    </div>
-                  </div>
+                <div class="column">
+                  <label class="label is-small">Tổng</label>
+                  <input
+                    v-model="detailHuman.tong"
+                    class="input is-small"
+                    type="number"
+                    disabled
+                  />
                 </div>
               </div>
 
               <div class="columns is-multiline">
-                <div class="column is-4">
-                  <div class="field">
-                    <label class="label is-small">Ngày bổ nhiệm</label>
-                    <div class="control">
-                      <input
-                        v-model="formAddNew.ngayBonhiemChucvu"
-                        class="input is-small"
-                        type="text"
-                      />
+                <div class="column">
+                  <label class="label is-small">Tên loại cổ phần</label>
+                  <div class="control">
+                    <div class="select is-small is-fullwidth">
+                      <select
+                        @change="changeLoaiCoPhan"
+                        v-model="detailHuman.tenloaicp"
+                      >
+                        <option value="" disabled>Chọn loại cổ phần</option>
+                        <option value="Đang làm việc">Đang làm việc</option>
+                        <option value="Cổ đông là đơn vị">
+                          Cổ đông là đơn vị
+                        </option>
+                        <option value="Đã nghỉ việc">Đã nghỉ việc</option>
+                      </select>
                     </div>
                   </div>
                 </div>
-
-                <div class="column is-4">
-                  <div class="field">
-                    <label class="label is-small">Trình độ học vấn</label>
-                    <div class="control">
-                      <input
-                        v-model="formAddNew.trinhDoHocVan"
-                        class="input is-small"
-                        type="text"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div class="column is-4">
-                  <div class="field">
-                    <label class="label is-small">Trình độ chuyên môn</label>
-                    <div class="control">
-                      <input
-                        v-model="formAddNew.trinhDoChuyenMon"
-                        class="input is-small"
-                        type="text"
-                      />
-                    </div>
-                  </div>
+                <div class="column">
+                  <label class="label is-small">Loại cổ phần</label>
+                  <input
+                    v-model="detailHuman.loaicp"
+                    class="input is-small"
+                    type="text"
+                  />
                 </div>
               </div>
 
-              <div class="columns is-multiline">
-                <div class="column is-4">
-                  <div class="field">
-                    <label class="label is-small">Số Chứng minh nhân dân</label>
-                    <div class="control">
-                      <input
-                        v-model="formAddNew.soCmnd"
-                        class="input is-small"
-                        type="number"
-                      />
-                    </div>
-                  </div>
-                </div>
+              <hr />
 
-                <div class="column is-4">
-                  <div class="field">
-                    <label class="label is-small">Ngày cấp</label>
-                    <div class="control">
-                      <input
-                        v-model="formAddNew.ngayCap_cmnd"
-                        class="input is-small"
-                        type="text"
-                      />
-                    </div>
-                  </div>
+              <div class="field is-grouped-function">
+                <div class="control">
+                  <button
+                    @click="onSaveEdit"
+                    class="button is-success is-small"
+                  >
+                    Ghi dữ liệu
+                  </button>
                 </div>
-
-                <div class="column is-4">
-                  <div class="field">
-                    <label class="label is-small">Nơi cấp</label>
-                    <div class="control">
-                      <input
-                        v-model="formAddNew.noiCap_cmnd"
-                        class="input is-small"
-                        type="text"
-                      />
-                    </div>
-                  </div>
+                &nbsp;
+                <div class="control">
+                  <button
+                    @click="isActive_Edit = false"
+                    class="button is-danger is-small"
+                  >
+                    Thoát
+                  </button>
                 </div>
               </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
 
+    <!-- modal add new human -->
+    <div class="">
+      <div :class="{ 'is-active': isActive_AddNew }" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content modal-card-addnew box">
+          <section class="modal-card-body">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <div>
+                <span style="color: #ff7f50" class="icon is-small is-left">
+                  <i class="fas fa-highlighter"></i>
+                </span>
+                <span style="font-weight: bold">Thêm mới cổ đông</span>
+              </div>
+              <div>
+                <button
+                  @click="isActive_AddNew = false"
+                  class="button is-small is-info"
+                >
+                  Thoát
+                </button>
+              </div>
+            </div>
+
+            <hr class="navbar-divider" />
+
+            <div style="margin-top: 10px">
               <div class="columns is-multiline">
-                <div class="column is-4">
+                <div class="column">
                   <div class="field">
-                    <label class="label is-small">Số Căn cước công dân</label>
+                    <label class="label is-small">Họ tên</label>
+                    <div class="control">
+                      <input
+                        v-model="formAddNew.hoTen"
+                        ref="nameInput"
+                        class="input is-small"
+                        type="text"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="column">
+                  <div class="field">
+                    <label class="label is-small">Số căn cước công dân</label>
                     <div class="control">
                       <input
                         v-model="formAddNew.soCccd"
                         class="input is-small"
                         type="number"
+                        maxlength="12"
+                        minlength="12"
+                        ref="phoneInput"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div class="column is-4">
+                <div class="column">
                   <div class="field">
                     <label class="label is-small">Ngày cấp</label>
                     <div class="control">
                       <input
-                        v-model="formAddNew.ngayCap_Cccd"
+                        v-model="formAddNew.ngayCap"
                         class="input is-small"
                         type="text"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div class="column is-4">
-                  <div class="field">
-                    <label class="label is-small">Nơi cấp</label>
-                    <div class="control">
-                      <input
-                        v-model="formAddNew.noiCap_Cccd"
-                        class="input is-small"
-                        type="text"
+                        ref="ngaysinhInput"
                       />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div class="field">
-                <label class="label is-small">Nơi khai sinh</label>
-                <div class="control">
-                  <input
-                    v-model="formAddNew.noiKhaiSinh"
-                    class="input is-small"
-                    type="text"
-                  />
-                </div>
-              </div>
-
-              <div class="field">
-                <label class="label is-small">Địa chỉ hộ khẩu</label>
-                <div class="control">
-                  <input
-                    v-model="formAddNew.diaChiHoKhau"
-                    class="input is-small"
-                    type="text"
-                  />
-                </div>
-              </div>
-
-              <div class="field">
-                <label class="label is-small">Địa chỉ thường trú</label>
-                <div class="control">
-                  <input
-                    v-model="formAddNew.diaChiHienNay"
-                    class="input is-small"
-                    type="text"
-                  />
-                </div>
-              </div>
-
-              <div class="field">
-                <label class="label is-small">Ghi chú</label>
-                <div class="control">
-                  <input
-                    v-model="formAddNew.ghichu"
-                    class="input is-small"
-                    type="email"
-                    placeholder="Ghi chú thêm"
-                  />
-                </div>
-              </div>
-
-              <div class="field">
-                <label class="label is-small">Ảnh Hồ sơ</label>
-                <div class="file is-small has-name is-info">
-                  <label class="file-label">
-                    <input
-                      ref="fileInput_Addnew"
-                      @change="onFileChange_Addnew"
-                      class="file-input"
-                      type="file"
-                      name="resume"
-                    />
-                    <span class="file-cta">
-                      <span class="file-icon">
-                        <i class="fas fa-upload"></i>
-                      </span>
-                      <span class="file-label">
-                        Chọn ảnh hồ sơ(Bắt buộc chọn)
-                      </span>
-                    </span>
-                    <span class="file-name">
-                      {{ formAddNew.fileName }}
-                    </span>
-                  </label>
-                </div>
-              </div>
-
-              <div class="columns">
+              <div class="columns is-multiline">
                 <div class="column">
                   <div class="field">
-                    <div v-if="formAddNew.url" class="column">
-                      <div id="preview">
-                        <img :src="formAddNew.url" />
-                      </div>
-                      <span style="color: red" class="icon is-small is-left">
-                        <i @click="remove_addnew" class="far fa-trash-alt"
-                          ><a>Xóa ảnh</a></i
-                        >
-                      </span>
+                    <label class="label is-small">Địa chỉ</label>
+                    <div class="control">
+                      <input
+                        v-model="formAddNew.diaChi"
+                        class="input is-small"
+                        type="text"
+                        ref="ngaysinhInput"
+                      />
                     </div>
                   </div>
+                </div>
+
+                <div class="column">
+                  <div class="field">
+                    <label class="label is-small">Ghi chú</label>
+                    <div class="control">
+                      <input
+                        v-model="formAddNew.ghichu"
+                        class="input is-small"
+                        type="text"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="columns is-multiline">
+                <div class="column">
+                  <div class="field">
+                    <label class="label is-small"
+                      >Phòng ban / Chi nhánh ?</label
+                    >
+                    <div class="control">
+                      <div class="select is-fullwidth is-small">
+                        <select @change="pbcnChange($event)">
+                          <option value="1">Phòng ban</option>
+                          <option value="0">Chi nhánh</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="column">
+                  <template v-if="isPbCn == 1">
+                    <div class="field">
+                      <label class="label is-small">Chọn Phòng ban</label>
+                      <div class="control">
+                        <div class="select is-fullwidth is-small">
+                          <select v-model="formAddNew.donVi">
+                            <option
+                              v-for="pb in dmPhongBan"
+                              :key="pb.maPhongBan"
+                              :value="pb.tenPhongBan"
+                            >
+                              {{ pb.tenPhongBan }}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                  <template v-else>
+                    <div class="field">
+                      <label class="label is-small">Chọn Chi nhánh</label>
+                      <div class="control">
+                        <div class="select is-fullwidth is-small">
+                          <select v-model="formAddNew.donVi">
+                            <option
+                              v-for="cn in dmChiNhanh"
+                              :key="cn.maChiNhanh"
+                              :value="cn.tenChiNhanh"
+                            >
+                              {{ cn.tenChiNhanh }}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+              <div class="columns is-multiline">
+                <div class="column">
+                  <label class="label is-small">Cổ phần tự do</label>
+                  <input
+                    v-model="formAddNew.cophantudo"
+                    class="input is-small"
+                    type="number"
+                  />
+                </div>
+                <div class="column">
+                  <label class="label is-small">Cổ phần hạn chế</label>
+                  <input
+                    v-model="formAddNew.cophanhanche"
+                    class="input is-small"
+                    type="number"
+                  />
+                </div>
+                <div class="column">
+                  <label class="label is-small">Tổng</label>
+                  <input
+                    v-model="formAddNew.tong"
+                    class="input is-small"
+                    type="number"
+                    disabled
+                  />
+                </div>
+              </div>
+
+              <div class="columns is-multiline">
+                <div class="column">
+                  <label class="label is-small">Tên loại cổ phần</label>
+                  <div class="control">
+                    <div class="select is-small is-fullwidth">
+                      <select
+                        @change="changeLoaiCoPhan"
+                        v-model="formAddNew.tenloaicp"
+                      >
+                        <option value="" disabled>Chọn loại cổ phần</option>
+                        <option value="Đang làm việc">Đang làm việc</option>
+                        <option value="Cổ đông là đơn vị">
+                          Cổ đông là đơn vị
+                        </option>
+                        <option value="Đã nghỉ việc">Đã nghỉ việc</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="column">
+                  <label class="label is-small">Loại cổ phần</label>
+                  <input
+                    v-model="formAddNew.loaicp"
+                    class="input is-small"
+                    type="text"
+                  />
                 </div>
               </div>
 
@@ -1662,44 +1676,22 @@ export default {
 
       formAddNew: {
         hoTen: "",
-        soDienThoai: "",
-        ngaySinh: "",
-        gioiTinh: "",
-        viTriCongTac: "",
-        thoiGianBatdauTgBhxh: "",
-        loaiHd: "",
-        thoiHanHd_Batdau: "",
-        thoiHanHd_Ketthuc: "",
-        ngayBonhiemChucvu: "",
-        trinhDoHocVan: "",
-        trinhDoChuyenMon: "",
-        danToc: "Kinh",
-        tonGiao: "Không",
-        soCmnd: "",
-        ngayCap_cmnd: "",
-        noiCap_cmnd: "",
         soCccd: "",
-        ngayCap_Cccd: "",
-        noiCap_Cccd: "",
-        noiKhaiSinh: "",
-        diaChiHoKhau: "",
-        diaChiHienNay: "",
-        createdBy: "",
-        createdAt: null,
+        ngayCap: "",
+        diaChi: "",
+        cophantudo: 0,
+        cophanhanche: 0,
+        tong: 0, // sẽ tự tính từ 2 trường trên
+
+        tenloaicp: "", // chọn từ dropdown
+        loaicp: "", // gán tự động theo tên loại
+
+        donVi: "",
+
         ghichu: "",
-        maNhanVien: "",
-        anhHoSo: "",
-        status: 1,
-        ischinhanh: 0,
-        isphongban: 0,
-        maPhongBan: "",
-        maChiNhanh: "",
-        phongBan: "",
-        chiNhanh: "",
-        isthoivu: 0,
-        fileName: "",
-        selectedFile: null,
-        url: null,
+
+        createdBy: "", // gán bằng user đang đăng nhập
+        createdAt: null, // gán trong hàm thêm
       },
 
       isPbCn: 1,
@@ -1715,6 +1707,9 @@ export default {
     itemsPerPage() {
       this.currentPage = 1;
     },
+
+    "formAddNew.cophantudo": "updateTong",
+    "formAddNew.cophanhanche": "updateTong",
   },
 
   computed: {
@@ -1744,6 +1739,26 @@ export default {
         if (a[this.sortKey] > b[this.sortKey]) return 1 * this.sortDirection;
         return 0;
       });
+    },
+
+    // countCodong() {
+    //   return this.sortedTable.filter((item) => item).length;
+    // },
+
+    countCodong() {
+      const data = this.sortedTable.filter((item) => item); // đảm bảo không null
+
+      const tongSoCodong = data.length;
+
+      const tongCoPhan = data.reduce((sum, item) => {
+        const giaTri = parseInt(item.tong); // ép chuỗi về số nguyên
+        return sum + (isNaN(giaTri) ? 0 : giaTri);
+      }, 0);
+
+      return {
+        tongSoCodong,
+        tongCoPhan,
+      };
     },
 
     pageCount() {
@@ -1818,36 +1833,10 @@ export default {
       }
     },
 
-    onFileChange(e) {
-      this.fileName = e.target.files[0];
-      this.url = URL.createObjectURL(this.fileName);
-      this.fileName = e.target.files[0].name;
-      this.selectedFile = e.target.files[0];
-    },
-
-    onFileChange_Addnew(e) {
-      this.formAddNew.fileName = e.target.files[0];
-      this.formAddNew.url = URL.createObjectURL(this.formAddNew.fileName);
-      this.formAddNew.fileName = e.target.files[0].name;
-      this.formAddNew.selectedFile = e.target.files[0];
-    },
-
-    remove() {
-      //console.log("removed");
-      this.selectedFile = "";
-      this.fileName = "";
-      this.url = null;
-      this.$refs.fileInput.type = "text";
-      this.$refs.fileInput.type = "file";
-    },
-
-    remove_addnew() {
-      //console.log("removed");
-      this.formAddNew.selectedFile = "";
-      this.formAddNew.fileName = "";
-      this.formAddNew.url = null;
-      this.$refs.fileInput_Addnew.type = "text";
-      this.$refs.fileInput_Addnew.type = "file";
+    updateTong() {
+      const tuDo = Number(this.formAddNew.cophantudo) || 0;
+      const hanChe = Number(this.formAddNew.cophanhanche) || 0;
+      this.formAddNew.tong = tuDo + hanChe;
     },
 
     async pbcnChange(e) {
@@ -1856,10 +1845,6 @@ export default {
     },
 
     async phongBanChange(e) {
-      this.formAddNew.maChiNhanh = "";
-      this.formAddNew.chiNhanh = "";
-      this.formAddNew.ischinhanh = 0;
-      this.formAddNew.isphongban = 1;
       const selectedMaPhongBan = e.target.value;
       this.formAddNew.phongBan = selectedMaPhongBan;
 
@@ -1870,20 +1855,15 @@ export default {
 
       // Nếu tìm thấy, gán tên phòng ban
       if (selectedPhongBan) {
-        this.formAddNew.phongBan = selectedPhongBan.tenPhongBan;
+        this.formAddNew.donVi = selectedPhongBan.tenPhongBan;
       } else {
-        this.formAddNew.phongBan = ""; // Nếu không tìm thấy, đặt rỗng
+        this.formAddNew.donVi = ""; // Nếu không tìm thấy, đặt rỗng
       }
 
-      // console.log("Mã phòng ban:", this.formAddNew.phongBan);
-      // console.log("Tên phòng ban:", this.formAddNew.tenPhongBan);
+      // console.log("Mã phòng ban:", this.formAddNew.donVi);
     },
 
     async chiNhanhChange(e) {
-      this.formAddNew.maPhongBan = "";
-      this.formAddNew.phongBan = "";
-      this.formAddNew.ischinhanh = 1;
-      this.formAddNew.isphongban = 0;
       const selectedMaChiNhanh = e.target.value;
       this.formAddNew.chiNhanh = selectedMaChiNhanh;
 
@@ -1894,13 +1874,12 @@ export default {
 
       // Nếu tìm thấy, gán tên phòng ban
       if (selectedChiNhanh) {
-        this.formAddNew.chiNhanh = selectedChiNhanh.tenChiNhanh;
+        this.formAddNew.donVi = selectedChiNhanh.tenChiNhanh;
       } else {
-        this.formAddNew.chiNhanh = ""; // Nếu không tìm thấy, đặt rỗng
+        this.formAddNew.donVi = ""; // Nếu không tìm thấy, đặt rỗng
       }
 
-      // console.log("Mã phòng ban:", this.formAddNew.phongBan);
-      // console.log("Tên phòng ban:", this.formAddNew.tenPhongBan);
+      // console.log("Mã phòng ban:", this.formAddNew.donVi);
     },
 
     async phongBanChange_Edit(e) {
@@ -1981,158 +1960,90 @@ export default {
     },
 
     async validateForm() {
-      const excludedFields = [
-        "ghichu",
-        "thoiHanHd_Ketthuc",
-        "ngayBonhiemChucvu",
-        "soCmnd",
-        "ngayCap_cmnd",
-        "noiCap_cmnd",
-        "noiKhaiSinh",
-        "diaChiHoKhau",
-        "createdAt",
-        "maNhanVien",
-        "anhHoSo",
-        "fileName",
-        "selectedFile",
-        "url",
-      ]; // Các trường có thể để trống
-
-      // Nếu ischinhanh = 0, không yêu cầu maChiNhanh và chiNhanh
-      if (this.formAddNew.ischinhanh === 0) {
-        excludedFields.push("maChiNhanh", "chiNhanh");
-      }
-
-      // Nếu isphongban = 0, không yêu cầu maPhongBan và phongBan
-      if (this.formAddNew.isphongban === 0) {
-        excludedFields.push("maPhongBan", "phongBan");
-      }
+      const excludedFields = ["ghichu", "createdAt", "createdBy"]; // Các trường không bắt buộc
 
       for (const key in this.formAddNew) {
         if (
           !excludedFields.includes(key) &&
-          (this.formAddNew[key] === "" || this.formAddNew[key] === null)
+          (this.formAddNew[key] === "" ||
+            this.formAddNew[key] === null ||
+            this.formAddNew[key] === undefined)
         ) {
           await Swal.fire({
             title: "Lỗi nhập liệu!",
             text: `Vui lòng nhập đầy đủ thông tin cho trường: ${key}`,
             icon: "warning",
           });
-          return false; // Dừng lại nếu có dữ liệu rỗng
+          return false;
         }
       }
 
-      return true; // Hợp lệ nếu tất cả trường bắt buộc đều có dữ liệu
+      return true; // Tất cả trường bắt buộc đều hợp lệ
+    },
+
+    changeLoaiCoPhan() {
+      const tenloaicp = this.formAddNew.tenloaicp;
+      if (tenloaicp == "Đang làm việc") {
+        this.formAddNew.loaicp = 1;
+      } else if (tenloaicp == "Cổ đông là đơn vị") {
+        this.formAddNew.loaicp = 2;
+      } else {
+        this.formAddNew.loaicp = 3;
+      }
     },
 
     async onSaveAddNew() {
       if (this.userRole == 1 || this.userRole == 2) {
-        // console.log(this.formAddNew);
         const isValid = await this.validateForm();
-        if (!isValid) return; // Dừng lại nếu dữ liệu không hợp lệ
-
-        // console.log(this.formAddNew.fileName);
-        // console.log(this.formAddNew.selectedFile);
-
-        if (
-          this.formAddNew.fileName == "" ||
-          this.formAddNew.selectedFile == null
-        ) {
-          await Swal.fire({
-            title: "Lỗi nhập liệu!",
-            text: `Yêu cầu phải có ảnh của hồ sơ`,
-            icon: "warning",
-          });
-          return;
-        }
+        if (!isValid) return;
 
         const result = await Swal.fire({
-          title: `Xác nhận thêm nhân sự ?`,
+          title: `Xác nhận thêm cổ đông?`,
           showDenyButton: true,
-          confirmButtonText: "Xác nhận thêm",
+          confirmButtonText: "Xác nhận",
           denyButtonText: `Hủy`,
         });
+
         if (result.isConfirmed) {
           this.isLoading = true;
           const current = new Date();
-          this.formAddNew.createdAt = current;
-          // tạo mã nhân viên
-          const res = await this.$axios.get("/api/empl/max-empl");
-          let maxidNv;
-          if (res) {
-            maxidNv = res.data[0].max_id;
-          }
-
-          let newId = maxidNv + 1; // ID mới
-          let maNhanVien = `NV${String(newId).padStart(4, "0")}`;
-          // console.log(maNhanVien);
-          this.formAddNew.maNhanVien = maNhanVien;
+          this.formAddNew.createdAt = current.toISOString();
 
           let data = new FormData();
           data.append("hoTen", this.formAddNew.hoTen);
-          data.append("soDienThoai", this.formAddNew.soDienThoai);
-          data.append("ngaySinh", this.formAddNew.ngaySinh);
-          data.append("gioiTinh", this.formAddNew.gioiTinh);
-          data.append("viTriCongTac", this.formAddNew.viTriCongTac);
-          data.append(
-            "thoiGianBatdauTgBhxh",
-            this.formAddNew.thoiGianBatdauTgBhxh
-          );
-          data.append("loaiHd", this.formAddNew.loaiHd);
-          data.append("thoiHanHd_Batdau", this.formAddNew.thoiHanHd_Batdau);
-          data.append("thoiHanHd_Ketthuc", this.formAddNew.thoiHanHd_Ketthuc);
-          data.append("ngayBonhiemChucvu", this.formAddNew.ngayBonhiemChucvu);
-          data.append("trinhDoHocVan", this.formAddNew.trinhDoHocVan);
-          data.append("trinhDoChuyenMon", this.formAddNew.trinhDoChuyenMon);
-          data.append("danToc", this.formAddNew.danToc || "Kinh");
-          data.append("tonGiao", this.formAddNew.tonGiao || "Không");
-          data.append("soCmnd", this.formAddNew.soCmnd);
-          data.append("ngayCap_cmnd", this.formAddNew.ngayCap_cmnd);
-          data.append("noiCap_cmnd", this.formAddNew.noiCap_cmnd);
           data.append("soCccd", this.formAddNew.soCccd);
-          data.append("ngayCap_Cccd", this.formAddNew.ngayCap_Cccd);
-          data.append("noiCap_Cccd", this.formAddNew.noiCap_Cccd);
-          data.append("noiKhaiSinh", this.formAddNew.noiKhaiSinh);
-          data.append("diaChiHoKhau", this.formAddNew.diaChiHoKhau);
-          data.append("diaChiHienNay", this.formAddNew.diaChiHienNay);
-          data.append("createdBy", this.formAddNew.createdBy);
+          data.append("ngayCap", this.formAddNew.ngayCap);
+          data.append("diaChi", this.formAddNew.diaChi);
+          data.append("cophantudo", this.formAddNew.cophantudo);
+          data.append("cophanhanche", this.formAddNew.cophanhanche);
+          data.append("tong", this.formAddNew.tong);
+          data.append("tenloaicp", this.formAddNew.tenloaicp);
+          data.append("loaicp", this.formAddNew.loaicp);
+          data.append("donVi", this.formAddNew.donVi);
+          data.append("ghichu", this.formAddNew.ghichu || "");
+          data.append("createdBy", this.user.username);
           data.append("createdAt", this.formAddNew.createdAt);
-          data.append("ghichu", this.formAddNew.ghichu);
-          data.append("maNhanVien", this.formAddNew.maNhanVien);
-          data.append("status", this.formAddNew.status);
-          data.append("ischinhanh", this.formAddNew.ischinhanh);
-          data.append("isphongban", this.formAddNew.isphongban);
-          data.append("maPhongBan", this.formAddNew.maPhongBan);
-          data.append("maChiNhanh", this.formAddNew.maChiNhanh);
-          data.append("phongBan", this.formAddNew.phongBan);
-          data.append("chiNhanh", this.formAddNew.chiNhanh);
-          data.append("isthoivu", this.formAddNew.isthoivu);
 
-          data.append(
-            "anhHoSo",
-            this.formAddNew.selectedFile,
-            this.formAddNew.selectedFile.name
-          );
-
-          // Gửi dữ liệu qua API
           try {
-            const response = await this.$axios.post("/api/empl/add-empl", data);
+            const response = await this.$axios.post(
+              "/api/empl/add-codong",
+              data
+            );
             if (response.status === 200) {
               this.isLoading = false;
               Swal.fire({
                 title: "Thành công",
-                text: `Đã thêm mới nhân sự: ${this.formAddNew.hoTen}`,
+                text: `Đã thêm cổ đông: ${this.formAddNew.hoTen}`,
                 icon: "success",
               });
 
-              this.getNhansu();
-              this.remove_addnew();
+              this.getNhansu(); // hoặc load lại danh sách nếu có
             }
           } catch (error) {
             this.isLoading = false;
             Swal.fire({
               title: "Lỗi",
-              text: "Có lỗi xảy ra khi thêm nhân viên!",
+              text: "Không thể thêm cổ đông!",
               icon: "error",
             });
             console.error(error);
@@ -2236,7 +2147,7 @@ export default {
     async onDelete(data) {
       if (this.userRole == 1 || this.userRole == 2) {
         const result = await Swal.fire({
-          title: `Xác nhận xoá dữ liệu nhân sự ?`,
+          title: `Xác nhận xoá cổ đông này ?`,
           showDenyButton: true,
           confirmButtonText: "Xác nhận xoá",
           denyButtonText: `Hủy xoá`,
@@ -2248,13 +2159,13 @@ export default {
 
           try {
             const res = await this.$axios.post(
-              `/api/empl//delete/nhansu`,
+              `/api/empl/delete/codong`,
               dataPost
             );
             if (res.status === 200) {
               Swal.fire({
                 title: "Xoá thành công",
-                text: `Đã xoá chi nhánh: ${data.tenPhongBan}`,
+                text: `Đã xoá cổ đông ${data.hoTen}`,
                 icon: "success",
               });
               this.getNhansu();
@@ -2301,7 +2212,7 @@ export default {
 }
 
 .modal-card-addnew {
-  width: 950px;
-  height: 700px;
+  width: auto;
+  height: auto;
 }
 </style>

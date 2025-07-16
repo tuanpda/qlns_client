@@ -952,7 +952,7 @@
               </div>
 
               <div class="columns is-multiline">
-                <div class="column is-4">
+                <div class="column">
                   <label class="label is-small">Thời vụ?</label>
                   <div class="field">
                     <label class="switch" style="vertical-align: middle">
@@ -962,7 +962,7 @@
                   </div>
                 </div>
 
-                <div class="column is-4">
+                <div class="column">
                   <label class="label is-small">Nặng nhọc - Độc hại?</label>
                   <div class="field">
                     <label class="switch" style="vertical-align: middle">
@@ -975,7 +975,17 @@
                   </div>
                 </div>
 
-                <div class="column is-4">
+                <div class="column">
+                  <label class="label is-small">Đảng viên?</label>
+                  <div class="field">
+                    <label class="switch" style="vertical-align: middle">
+                      <input v-model="detailHuman.isDangVien" type="checkbox" />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="column">
                   <div class="field">
                     <label class="label is-small"
                       >Ngày hợp đồng tính phép</label
@@ -2799,6 +2809,7 @@ export default {
           data.append("status", this.detailHuman.status);
           data.append("ischinhanh", this.detailHuman.ischinhanh);
           data.append("isphongban", this.detailHuman.isphongban);
+          data.append("isDangVien", this.detailHuman.isDangVien);
           data.append("maPhongBan", this.detailHuman.maPhongBan);
           data.append("maChiNhanh", this.detailHuman.maChiNhanh);
           data.append("phongBan", this.detailHuman.phongBan);

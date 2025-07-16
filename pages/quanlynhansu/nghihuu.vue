@@ -26,6 +26,13 @@
       </div>
     </div>
 
+    <div>
+      <p style="padding: 5px; font-size: 15px">
+        &nbsp; * Tổng số HĐ loại A: <strong>{{ countLoaiA }}</strong> | Tổng số
+        HĐ loại B: <strong>{{ countLoaiB }}</strong>
+      </p>
+    </div>
+
     <div class="box">
       <div class="table_wrapper">
         <table
@@ -41,10 +48,20 @@
               <th style="font-size: small; text-align: center">
                 Thời điểm nghỉ
               </th>
-              <!-- <th style="font-size: small; text-align: center">
-                Ngày vào ngành
-              </th> -->
-              <th style="font-size: small; text-align: center">Loại HĐ</th>
+              <th style="font-size: small; text-align: center">
+                Lý do nghỉ việc
+              </th>
+              <th style="font-size: small; text-align: center">
+                Loại HĐ <br />
+                <select
+                  v-model="selectedLoaiHD"
+                  style="width: 60px; font-size: 10px; padding: 2px"
+                >
+                  <option value="">Tất cả</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                </select>
+              </th>
               <th style="font-size: small; text-align: center">Ngày sinh</th>
               <th style="font-size: small; text-align: center">
                 Thời gian bắt đầu
@@ -89,15 +106,15 @@
               >
                 {{ item.thoiDiemNghi }}
               </td>
-              <!-- <td
+              <td
                 style="
                   font-size: small;
                   text-align: center;
                   vertical-align: middle;
                 "
               >
-                {{ item.ngayVaoNganh }}
-              </td> -->
+                {{ item.lyDoNghiViec }}
+              </td>
               <td
                 style="
                   font-size: small;
@@ -1731,6 +1748,7 @@ export default {
       isPbCn: 1,
 
       userRole: null,
+      selectedLoaiHD: "",
     };
   },
 
@@ -1784,8 +1802,29 @@ export default {
       return this.startIndex + this.itemsPerPage;
     },
 
+    // paginatedTable() {
+    //   return this.sortedTable.slice(this.startIndex, this.endIndex);
+    // },
+
     paginatedTable() {
-      return this.sortedTable.slice(this.startIndex, this.endIndex);
+      // console.log(this.sortedTable);
+      let filtered = this.sortedTable;
+      if (this.selectedLoaiHD) {
+        filtered = filtered.filter(
+          (item) => item.loaiHd === this.selectedLoaiHD
+        );
+        // console.log(filtered);
+      }
+
+      return filtered.slice(this.startIndex, this.endIndex);
+    },
+
+    countLoaiA() {
+      return this.sortedTable.filter((item) => item.loaiHd === "A").length;
+    },
+
+    countLoaiB() {
+      return this.sortedTable.filter((item) => item.loaiHd === "B").length;
     },
 
     pages() {
