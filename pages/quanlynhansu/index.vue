@@ -1181,6 +1181,87 @@
                 </div>
               </div>
 
+              <!-- Thông tin đảng -->
+               <div class="columns is-multiline">
+                <div class="column is-4">
+                  <div class="field">
+                    <label class="label is-small">Tên chi bộ</label>
+                    <div class="control">
+                      <input
+                        v-model="detailHuman.tenChiBo"
+                        class="input is-small"
+                        type="text"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="column is-4">
+                  <div class="field">
+                    <label class="label is-small">Chức vụ Đảng đoàn thể</label>
+                    <div class="control">
+                      <input
+                        v-model="detailHuman.chucVuDangDoanThe"
+                        class="input is-small"
+                        type="text"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="column is-4">
+                  <div class="field">
+                    <label class="label is-small">Ngày vào Đảng chính thức</label>
+                    <div class="control">
+                      <input
+                        v-model="detailHuman.ngayVaoDangChinhThuc"
+                        class="input is-small"
+                        type="text"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="columns is-multiline">
+                <div class="column is-4">
+                  <div class="field">
+                    <label class="label is-small">Ngày vào Đảng</label>
+                    <div class="control">
+                      <input
+                        v-model="detailHuman.ngayVaoDang"
+                        class="input is-small"
+                        type="text"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="column is-4">
+                  <div class="field">
+                    <label class="label is-small">Huy hiệu Đảng</label>
+                    <div class="control">
+                      <input
+                        v-model="detailHuman.huyHieuDang"
+                        class="input is-small"
+                        type="text"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="column is-4">
+                  <div class="field">
+                    <label class="label is-small">Dự bị ?</label>
+                  <div class="field">
+                    <label class="switch" style="vertical-align: middle">
+                      <input v-model="detailHuman.isDuBi" type="checkbox" />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  </div>
+                </div>
+              </div>
+
               <div class="field">
                 <label class="label is-small">Nơi khai sinh</label>
                 <div class="control">
@@ -2821,6 +2902,14 @@ export default {
           } else {
             data.append("anhHoSo", this.detailHuman.anhHoSo);
           }
+
+          // thêm thông tin đảng
+          data.append("tenChiBo", this.detailHuman.tenChiBo);
+          data.append("chucVuDangDoanThe", this.detailHuman.chucVuDangDoanThe);
+          data.append("ngayVaoDang", this.detailHuman.ngayVaoDang);
+          data.append("ngayVaoDangChinhThuc", this.detailHuman.ngayVaoDangChinhThuc);
+          data.append("huyHieuDang", this.detailHuman.huyHieuDang);
+          data.append("isDuBi", this.detailHuman.isDuBi);
 
           // Gửi dữ liệu qua API
           try {
