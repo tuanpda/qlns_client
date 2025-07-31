@@ -2374,7 +2374,9 @@ export default {
     },
 
     async onSaveAddNew() {
-      if (this.$auth.user.role == 1 || this.$auth.user.role == 2) {
+      // console.log(this.user);
+      // console.log(this.user.role);
+      if (this.user.role == 1 || this.user.role == 2) {
         // console.log(this.formAddNew);
         const isValid = await this.validateForm();
         if (!isValid) return; // Dừng lại nếu dữ liệu không hợp lệ
@@ -2486,7 +2488,7 @@ export default {
                 chucNang: "Thêm mới Lao động thời vụ",
                 noiDung: `Thêm mới Lao động thời vụ: ${this.formAddNew.hoTen}`,
                 createdAt: current,
-                createdBy: this.$auth.user.username,
+                createdBy: this.user.username,
               };
               await this.$axios.post("/api/empl/read-log-his-system", dataLog);
 
@@ -2619,7 +2621,7 @@ export default {
     },
 
     async onSaveEdit() {
-      if (this.$auth.user.role == 1 || this.$auth.user.role == 2) {
+      if (this.user.role == 1 || this.user.role == 2) {
         const result = await Swal.fire({
           title: `Xác nhận hiệu chỉnh dữ liệu nhân sự ?`,
           showDenyButton: true,
@@ -2693,7 +2695,7 @@ export default {
                 chucNang: "Hiệu chỉnh Lao động thời vụ",
                 noiDung: `Hiệu chỉnh Lao động thời vụ: ${this.detailHuman.hoTen}`,
                 createdAt: current,
-                createdBy: this.$auth.user.username,
+                createdBy: this.user.username,
               };
               await this.$axios.post("/api/empl/read-log-his-system", dataLog);
               // Reset form hoặc cập nhật danh sách
@@ -2714,7 +2716,7 @@ export default {
     },
 
     async onDelete(data) {
-      if (this.$auth.user.role == 1 || this.$auth.user.role == 2) {
+      if (this.user.role == 1 || this.user.role == 2) {
         const result = await Swal.fire({
           title: `Xác nhận xoá dữ liệu Lao động thời vụ ?`,
           showDenyButton: true,
@@ -2748,7 +2750,7 @@ export default {
                 chucNang: "Xoá Lao động thời vụ",
                 noiDung: `Xoá Lao động thời vụ: ${data.hoTen}`,
                 createdAt: current,
-                createdBy: this.$auth.user.username,
+                createdBy: this.user.username,
               };
               await this.$axios.post("/api/empl/read-log-his-system", dataLog);
 
