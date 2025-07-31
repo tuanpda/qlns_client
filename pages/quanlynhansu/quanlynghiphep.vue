@@ -110,7 +110,7 @@
               <td>{{ nv.hoTen }}</td>
               <td style="text-align: center">{{ nv.ngayHopDongTinhPhep }}</td>
               <td style="text-align: center">
-                {{ nv.isNangNhocDocHai === 1 ? "ĐH" : "BT" }}
+                {{ nv.isNangNhocDocHai ? "ĐH" : "BT" }}
               </td>
               <td style="text-align: center">{{ nv.ngayPhep }}</td>
               <td v-for="i in 12" :key="i">
