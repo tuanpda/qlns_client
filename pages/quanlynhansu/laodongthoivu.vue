@@ -2384,18 +2384,6 @@ export default {
         // console.log(this.formAddNew.fileName);
         // console.log(this.formAddNew.selectedFile);
 
-        if (
-          this.formAddNew.fileName == "" ||
-          this.formAddNew.selectedFile == null
-        ) {
-          await Swal.fire({
-            title: "Lỗi nhập liệu!",
-            text: `Yêu cầu phải có ảnh của hồ sơ`,
-            icon: "warning",
-          });
-          return;
-        }
-
         const result = await Swal.fire({
           title: `Xác nhận thêm nhân sự ?`,
           showDenyButton: true,
