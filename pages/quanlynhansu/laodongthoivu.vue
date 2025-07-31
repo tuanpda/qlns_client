@@ -2461,11 +2461,13 @@ export default {
             this.formAddNew.ngayHopDongTinhPhep
           );
 
-          data.append(
-            "anhHoSo",
-            this.formAddNew.selectedFile,
-            this.formAddNew.selectedFile.name
-          );
+          if (this.formAddNew.selectedFile) {
+            data.append(
+              "anhHoSo",
+              this.formAddNew.selectedFile,
+              this.formAddNew.selectedFile.name
+            );
+          }
 
           // Gửi dữ liệu qua API
           try {

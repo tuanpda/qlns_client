@@ -1182,7 +1182,7 @@
               </div>
 
               <!-- Thông tin đảng -->
-               <div class="columns is-multiline">
+              <div class="columns is-multiline">
                 <div class="column is-4">
                   <div class="field">
                     <label class="label is-small">Tên chi bộ</label>
@@ -1211,7 +1211,9 @@
 
                 <div class="column is-4">
                   <div class="field">
-                    <label class="label is-small">Ngày vào Đảng chính thức</label>
+                    <label class="label is-small"
+                      >Ngày vào Đảng chính thức</label
+                    >
                     <div class="control">
                       <input
                         v-model="detailHuman.ngayVaoDangChinhThuc"
@@ -1252,12 +1254,12 @@
                 <div class="column is-4">
                   <div class="field">
                     <label class="label is-small">Dự bị ?</label>
-                  <div class="field">
-                    <label class="switch" style="vertical-align: middle">
-                      <input v-model="detailHuman.isDuBi" type="checkbox" />
-                      <span class="slider"></span>
-                    </label>
-                  </div>
+                    <div class="field">
+                      <label class="switch" style="vertical-align: middle">
+                        <input v-model="detailHuman.isDuBi" type="checkbox" />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -2794,14 +2796,17 @@ export default {
             this.formAddNew.ngayHopDongTinhPhep
           );
 
-          data.append(
-            "anhHoSo",
-            this.formAddNew.selectedFile,
-            this.formAddNew.selectedFile.name
-          );
+          if (this.formAddNew.selectedFile) {
+            data.append(
+              "anhHoSo",
+              this.formAddNew.selectedFile,
+              this.formAddNew.selectedFile.name
+            );
+          }
 
           // Gửi dữ liệu qua API
           try {
+            // console.log("bắt đầu vào");
             const response = await this.$axios.post("/api/empl/add-empl", data);
             if (response.status === 200) {
               this.isLoading = false;
@@ -2907,7 +2912,10 @@ export default {
           data.append("tenChiBo", this.detailHuman.tenChiBo);
           data.append("chucVuDangDoanThe", this.detailHuman.chucVuDangDoanThe);
           data.append("ngayVaoDang", this.detailHuman.ngayVaoDang);
-          data.append("ngayVaoDangChinhThuc", this.detailHuman.ngayVaoDangChinhThuc);
+          data.append(
+            "ngayVaoDangChinhThuc",
+            this.detailHuman.ngayVaoDangChinhThuc
+          );
           data.append("huyHieuDang", this.detailHuman.huyHieuDang);
           data.append("isDuBi", this.detailHuman.isDuBi);
 
