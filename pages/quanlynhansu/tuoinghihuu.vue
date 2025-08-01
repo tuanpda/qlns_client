@@ -43,9 +43,9 @@
               <th style="font-size: small; text-align: center; width: 3%">
                 STT
               </th>
-              <th style="font-size: small; text-align: center; width: 5%">
+              <!-- <th style="font-size: small; text-align: center; width: 5%">
                 Ảnh Hồ sơ
-              </th>
+              </th> -->
               <th style="font-size: small; text-align: center">Họ tên</th>
               <th style="font-size: small; text-align: center">Ngày sinh</th>
               <th style="font-size: small; text-align: center">Giới tính</th>
@@ -81,7 +81,7 @@
               >
                 {{ index + 1 }}
               </td>
-              <td style="text-align: center; vertical-align: middle">
+              <!-- <td style="text-align: center; vertical-align: middle">
                 <img
                   :src="item.anhHoSo"
                   style="
@@ -92,7 +92,7 @@
                     margin-right: 10px;
                   "
                 />
-              </td>
+              </td> -->
               <td style="font-size: small; vertical-align: middle">
                 {{ item.hoTen }}
               </td>

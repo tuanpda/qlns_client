@@ -65,9 +65,9 @@
               <th style="font-size: small; text-align: center; width: 5%">
                 Mã NV
               </th>
-              <th style="font-size: small; text-align: center; width: 5%">
+              <!-- <th style="font-size: small; text-align: center; width: 5%">
                 Ảnh Hồ sơ
-              </th>
+              </th> -->
               <th style="font-size: small; text-align: center">Họ tên</th>
               <th style="font-size: small; text-align: center">Ngày sinh</th>
               <th style="font-size: small; text-align: center">Giới tính</th>
@@ -101,7 +101,7 @@
               >
                 {{ item.maNhanVien }}
               </td>
-              <td style="text-align: center; vertical-align: middle">
+              <!-- <td style="text-align: center; vertical-align: middle">
                 <img
                   :src="item.anhHoSo"
                   style="
@@ -112,7 +112,7 @@
                     margin-right: 10px;
                   "
                 />
-              </td>
+              </td> -->
               <td style="font-size: small; vertical-align: middle">
                 {{ item.hoTen }}
               </td>
@@ -755,7 +755,7 @@
               </div>
 
               <div class="columns is-multiline">
-                <div class="column is-4">
+                <div class="column">
                   <label class="label is-small">Đang làm - Thôi việc?</label>
                   <!-- <div class="field">
                     <label class="switch" style="vertical-align: middle">
@@ -771,7 +771,17 @@
                     >
                   </div>
                 </div>
-                <div class="column is-4">
+                <div class="column">
+                  <label class="label is-small">Chuyển sang thời vụ?</label>
+                  <div class="field">
+                    <Button
+                      @click="chuyenThoivu"
+                      class="button is-small is-success"
+                      >Chuyển thời vụ</Button
+                    >
+                  </div>
+                </div>
+                <div class="column">
                   <div class="field">
                     <label class="label is-small">Dân tộc</label>
                     <div class="control">
@@ -783,7 +793,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="column is-4">
+                <div class="column">
                   <div class="field">
                     <label class="label is-small">Kinh</label>
                     <div class="control">
@@ -2231,6 +2241,67 @@
         </div>
       </div>
     </div>
+
+    <!-- modal chuyển chính thức -->
+    <div class="">
+      <div :class="{ 'is-active': isActive_chuyenThoivu }" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content modal-card-change box" style="height: 300px">
+          <section class="modal-card-body">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <div>
+                <span style="color: #198754" class="icon is-small is-left">
+                  <i class="fas fa-crop-alt"></i>
+                </span>
+                <span style="font-weight: bold">Chuyển thời vụ</span>
+              </div>
+            </div>
+
+            <hr class="navbar-divider" />
+
+            <div v-if="detailHuman" style="margin-top: 10px">
+              <div class="field">
+                <label class="label">Họ tên</label>
+                <div class="control">
+                  <input
+                    v-model="detailHuman.hoTen"
+                    ref="nameInput"
+                    class="input"
+                    type="text"
+                    disabled
+                  />
+                </div>
+              </div>
+
+              <hr />
+
+              <div class="field is-grouped-function">
+                <div class="control">
+                  <button @click="onSavechuyenThoivu" class="button is-success">
+                    Xác nhận chuyển
+                  </button>
+                </div>
+                &nbsp;
+                <div class="control">
+                  <button
+                    @click="isActive_chuyenThoivu = false"
+                    class="button is-danger"
+                  >
+                    Thoát
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -2263,6 +2334,7 @@ export default {
       isActive_AddNew: false,
       isActive_Change: false,
       isActive_Nghiviec: false,
+      isActive_chuyenThoivu: false,
       isLoading: false,
 
       fileName: "",
@@ -3292,6 +3364,49 @@ export default {
     async xuLyNghiViec() {
       this.isActive_Nghiviec = true;
       // console.log(this.detailHuman);
+    },
+
+    async onSavechuyenThoivu() {
+      // gọi hàm api tích chọn isThoiVu=0
+      const dataUpdate = {
+        _id: this.detailHuman._id,
+      };
+
+      const result = await Swal.fire({
+        title: `Xác nhận chuyển sang thời vụ?`,
+        showDenyButton: true,
+        confirmButtonText: "Xác nhận",
+        denyButtonText: `Hủy`,
+      });
+      if (result.isConfirmed) {
+        try {
+          const res_update = await this.$axios.post(
+            `/api/empl/chuyen-thoi-vu`,
+            dataUpdate
+          );
+          // console.log(res_update);
+          if (res_update.data.success == true) {
+            await Swal.fire({
+              icon: "success",
+              title: "Thành công",
+              text: "Đã chuyển về thời vụ",
+              timer: 2000,
+              showConfirmButton: false,
+            });
+
+            this.isActive_Edit = false;
+            this.isActive_chuyenThoivu = false;
+            this.getNhansu();
+          }
+        } catch (error) {
+          console.error("Lỗi ghi dữ liệu:", error);
+          alert("Đã có lỗi xảy ra khi cập nhật.");
+        }
+      }
+    },
+
+    chuyenThoivu() {
+      this.isActive_chuyenThoivu = true;
     },
 
     async capNhatNghiViec() {
